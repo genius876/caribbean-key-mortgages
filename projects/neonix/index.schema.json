@@ -1,0 +1,41 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "Formix — Design Subscription Landing Page",
+      "url": "https://willing-graphs-650959.framer.app"
+    },
+    {
+      "@type": "WebSite",
+      "name": "Formix — Design Subscription Landing Page",
+      "url": "https://willing-graphs-650959.framer.app"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://willing-graphs-650959.framer.app/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Projects",
+          "item": "https://willing-graphs-650959.framer.app/projects"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Neonix",
+          "item": "https://willing-graphs-650959.framer.app/projects/neonix"
+        }
+      ]
+    }
+  ],
+  "confidence": {
+    "BreadcrumbList": 0.95
+  }
+}

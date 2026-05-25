@@ -1,0 +1,81 @@
+{
+  "manifestVersion": 1,
+  "tool": "FramerExport",
+  "generatedAt": "2026-05-25T15:48:53.106Z",
+  "site": {
+    "name": "Formix — Design Subscription Landing Page",
+    "url": "https://willing-graphs-650959.framer.app",
+    "pageCount": 7,
+    "assetCount": 256
+  },
+  "pages": [
+    {
+      "url": "/",
+      "slug": "index",
+      "type": "landing",
+      "contentPath": "index.md",
+      "seoPath": "index.yml",
+      "schemaPath": "index.schema.json",
+      "wordCount": 939
+    },
+    {
+      "url": "/projects/aven",
+      "slug": "projects/aven",
+      "type": "landing",
+      "contentPath": "projects/aven/index.md",
+      "seoPath": "projects/aven/index.yml",
+      "schemaPath": "projects/aven/index.schema.json",
+      "wordCount": 129
+    },
+    {
+      "url": "/projects/etery",
+      "slug": "projects/etery",
+      "type": "landing",
+      "contentPath": "projects/etery/index.md",
+      "seoPath": "projects/etery/index.yml",
+      "schemaPath": "projects/etery/index.schema.json",
+      "wordCount": 124
+    },
+    {
+      "url": "/legals/privacy-policy",
+      "slug": "legals/privacy-policy",
+      "type": "landing",
+      "contentPath": "legals/privacy-policy/index.md",
+      "seoPath": "legals/privacy-policy/index.yml",
+      "schemaPath": "legals/privacy-policy/index.schema.json",
+      "wordCount": 332
+    },
+    {
+      "url": "/legals/terms-of-service",
+      "slug": "legals/terms-of-service",
+      "type": "landing",
+      "contentPath": "legals/terms-of-service/index.md",
+      "seoPath": "legals/terms-of-service/index.yml",
+      "schemaPath": "legals/terms-of-service/index.schema.json",
+      "wordCount": 365
+    },
+    {
+      "url": "/projects/genesy",
+      "slug": "projects/genesy",
+      "type": "landing",
+      "contentPath": "projects/genesy/index.md",
+      "seoPath": "projects/genesy/index.yml",
+      "schemaPath": "projects/genesy/index.schema.json",
+      "wordCount": 128
+    },
+    {
+      "url": "/projects/neonix",
+      "slug": "projects/neonix",
+      "type": "landing",
+      "contentPath": "projects/neonix/index.md",
+      "seoPath": "projects/neonix/index.yml",
+      "schemaPath": "projects/neonix/index.schema.json",
+      "wordCount": 122
+    }
+  ],
+  "assets": {
+    "images": 202,
+    "fonts": 10,
+    "scripts": 44
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "tool": "FramerClone",
+  "version": "1.0.0",
+  "clonedAt": "2026-05-25T15:49:01.229Z",
+  "sourceUrl": "https://willing-graphs-650959.framer.app/",
+  "stats": {
+    "pages": 7,
+    "assets": 306,
+    "totalSize": 125349515,
+    "duration": 9989
+  },
+  "migrate": true
+}

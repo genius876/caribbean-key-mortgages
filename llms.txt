@@ -1,0 +1,18 @@
+# Formix — Design Subscription Landing Page
+> Formix is a premium Framer landing page for design subscriptions that helps you launch a client-generating website in minutes. Perfect for solo designers, creative studios, and productized service businesses—designed to qualify leads and book calls fast.
+
+## What We Do
+- Services Tailored to Your Mortgage Needs
+- How does it all work?
+
+## What We Do Not Do
+- [TODO: Add disambiguation to prevent AI hallucination]
+
+## Pages
+- [Formix — Design Subscription Landing Page](https://willing-graphs-650959.framer.app/)
+- [Aven - Creatora - Creator portfolio template](https://willing-graphs-650959.framer.app/projects/aven)
+- [Etery - Creatora - Creator portfolio template](https://willing-graphs-650959.framer.app/projects/etery)
+- [Privacy Policy - Formix — Design Subscription Template](https://willing-graphs-650959.framer.app/legals/privacy-policy)
+- [Terms of Service - Formix — Design Subscription Template](https://willing-graphs-650959.framer.app/legals/terms-of-service)
+- [Genesy - Creatora - Creator portfolio template](https://willing-graphs-650959.framer.app/projects/genesy)
+- [Neonix - Creatora - Creator portfolio template](https://willing-graphs-650959.framer.app/projects/neonix)

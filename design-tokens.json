@@ -1,0 +1,108 @@
+{
+  "colors": [
+    {
+      "variable": "--token-1980655a-21b5-4c9d-8c69-cf01361bf3ca",
+      "value": "#f0f0f0"
+    },
+    {
+      "variable": "--token-6c370109-bfec-4b69-9f9d-c55115fbfa09",
+      "value": "#e5e5e5"
+    },
+    {
+      "variable": "--token-93a0b997-63bc-45d7-9a42-2255cf2ed90e",
+      "value": "#151619"
+    },
+    {
+      "variable": "--token-2abcf95d-ccec-4932-94c1-f16318eef94e",
+      "value": "#4f4f4f"
+    },
+    {
+      "variable": "--token-6a4ed56d-f5d8-40c8-b936-26601b549f63",
+      "value": "#00000014"
+    },
+    {
+      "variable": "--token-86c07165-dbe2-4f83-b13c-71fddf831442",
+      "value": "#151619"
+    },
+    {
+      "variable": "--token-096cf62c-fca8-40da-b015-5bc664bc8f99",
+      "value": "#f0f0f0"
+    },
+    {
+      "variable": "--token-ef4294db-1ae0-4d08-8c39-7999842dcd81",
+      "value": "#a1a1a1"
+    },
+    {
+      "variable": "--token-c2c4dd37-49da-448f-83b8-7513387cf04e",
+      "value": "#9c5438"
+    },
+    {
+      "variable": "--token-f478a810-4450-4e8a-be86-2a0338d64e83",
+      "value": "#ffffff08"
+    },
+    {
+      "variable": "--token-64ff8f2f-0d9b-4ca0-b122-7a59165514da",
+      "value": "#00000026"
+    },
+    {
+      "variable": "--token-ed8ef562-b9f6-4deb-8c1a-0df4399da032",
+      "value": "#482e21"
+    },
+    {
+      "variable": "--token-c0813f02-1b56-4b30-8b2b-03dc22e93e3f",
+      "value": "#b69d87"
+    },
+    {
+      "variable": "--token-256aef9e-bf01-4dc7-8906-a6893c3918db",
+      "value": "#e9e0d580"
+    }
+  ],
+  "fonts": [
+    {
+      "variable": "--framer-font-family",
+      "value": "\"Montserrat\",\"Montserrat Placeholder\",sans-serif"
+    },
+    {
+      "variable": "--framer-font-family-bold",
+      "value": "\"Montserrat\",sans-serif"
+    },
+    {
+      "variable": "--framer-font-family-bold-italic",
+      "value": "\"Montserrat\",sans-serif"
+    },
+    {
+      "variable": "--framer-font-family-italic",
+      "value": "\"Montserrat\",\"Montserrat Placeholder\",sans-serif"
+    }
+  ],
+  "spacing": [
+    {
+      "variable": "--line-height-abs",
+      "value": "19.2px"
+    }
+  ],
+  "rawVariables": {
+    "--token-1980655a-21b5-4c9d-8c69-cf01361bf3ca": "#f0f0f0",
+    "--token-6c370109-bfec-4b69-9f9d-c55115fbfa09": "#e5e5e5",
+    "--token-93a0b997-63bc-45d7-9a42-2255cf2ed90e": "#151619",
+    "--token-2abcf95d-ccec-4932-94c1-f16318eef94e": "#4f4f4f",
+    "--token-6a4ed56d-f5d8-40c8-b936-26601b549f63": "#00000014",
+    "--token-86c07165-dbe2-4f83-b13c-71fddf831442": "#151619",
+    "--token-096cf62c-fca8-40da-b015-5bc664bc8f99": "#f0f0f0",
+    "--token-ef4294db-1ae0-4d08-8c39-7999842dcd81": "#a1a1a1",
+    "--token-c2c4dd37-49da-448f-83b8-7513387cf04e": "#9c5438",
+    "--token-f478a810-4450-4e8a-be86-2a0338d64e83": "#ffffff08",
+    "--token-64ff8f2f-0d9b-4ca0-b122-7a59165514da": "#00000026",
+    "--token-ed8ef562-b9f6-4deb-8c1a-0df4399da032": "#482e21",
+    "--token-c0813f02-1b56-4b30-8b2b-03dc22e93e3f": "#b69d87",
+    "--token-256aef9e-bf01-4dc7-8906-a6893c3918db": "#e9e0d580",
+    "--border-color": "var(--token-6a4ed56d-f5d8-40c8-b936-26601b549f63,#0000000d)",
+    "--framer-font-family": "\"Montserrat\",\"Montserrat Placeholder\",sans-serif",
+    "--framer-font-family-bold": "\"Montserrat\",sans-serif",
+    "--framer-font-family-bold-italic": "\"Montserrat\",sans-serif",
+    "--framer-font-family-italic": "\"Montserrat\",\"Montserrat Placeholder\",sans-serif",
+    "--list-style-type": "decimal",
+    "--text": "var(--token-ef4294db-1ae0-4d08-8c39-7999842dcd81, rgb(161, 161, 161))",
+    "--line-height-abs": "19.2px"
+  }
+}

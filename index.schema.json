@@ -1,0 +1,239 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "Formix — Design Subscription Landing Page",
+      "url": "https://willing-graphs-650959.framer.app"
+    },
+    {
+      "@type": "WebSite",
+      "name": "Formix — Design Subscription Landing Page",
+      "url": "https://willing-graphs-650959.framer.app"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does it all work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our mortgage process is a simple 4 step process to make sure you get all you need, in the simplest and most stress-free way possible. <div class=\"framer-ovbol7\" data-framer-name=\"Highlighter\" style=\"background-color:var(--token-c2c4dd37-49da-448"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What documents do I need to get started with a mortgage in Curaçao?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most clients only need a few basics to begin: passport, proof of address, income documents, and recent bank statements. We provide a personalized checklist based on your situation — local income, foreign income, rental income, or self-employment — so you always know exactly what to prepare. <div class=\"framer-8bZeq framer-PyPhC framer-UaE14 framer-43ss71 framer-v-z48pug\" data-framer-name=\"Primary Closed\" data-highlight=\"true\" tabindex=\"0\" style=\"background-color:var(--token-1980655a-21b5-4c9d-8c"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I qualify using foreign or mixed income?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much can I borrow for a home in Curaçao?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does the mortgage approval process usually take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do banks in Curaçao offer different mortgage terms?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What down payment should I plan for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-styl"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can any property be financed?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a lawyer for the property transfer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p class=\"framer-text framer-styles-preset-1o469ca\" data-styles-preset=\"z3LAOKmRQ\" style=\"--framer-text-color:var(--extracted-r6o4lv,"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does it all work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our mortgage process is a simple 4 step process to make sure you get all you need, in the simplest and most stress-free way possible. <div class=\"framer-ovbol7\" data-framer-name=\"Highlighter\" style=\"background-color:var(--token-c2c4dd37-49da-448"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What documents do I need to get started with a mortgage in Curaçao?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most clients only need a few basics to begin: passport, proof of address, income documents, and recent bank statements. We provide a personalized checklist based on your situation — local income, foreign income, rental income, or self-employment — so you always know exactly what to prepare. <div class=\"framer-8bZeq framer-PyPhC framer-UaE14 framer-43ss71 framer-v-z48pug\" data-framer-name=\"Primary Closed\" data-highlight=\"true\" tabindex=\"0\" style=\"background-color:var(--token-1980655a-21b5-4c9d-8c"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I qualify using foreign or mixed income?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much can I borrow for a home in Curaçao?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does the mortgage approval process usually take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do banks in Curaçao offer different mortgage terms?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What down payment should I plan for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-styl"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can any property be financed?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a lawyer for the property transfer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p class=\"framer-text framer-styles-preset-1o469ca\" data-styles-preset=\"z3LAOKmRQ\" style=\"--framer-text-color:var(--extracted-r6o4lv,"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does it all work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Our mortgage process is a simple 4 step process to make sure you get all you need, in the simplest and most stress-free way possible. <div class=\"framer-ovbol7\" data-framer-name=\"Highlighter\" style=\"background-color:var(--token-c2c4dd37-49da-448"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What documents do I need to get started with a mortgage in Curaçao?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most clients only need a few basics to begin: passport, proof of address, income documents, and recent bank statements. We provide a personalized checklist based on your situation — local income, foreign income, rental income, or self-employment — so you always know exactly what to prepare. <div class=\"framer-8bZeq framer-PyPhC framer-UaE14 framer-43ss71 framer-v-z48pug\" data-framer-name=\"Primary Closed\" data-highlight=\"true\" tabindex=\"0\" style=\"background-color:var(--token-1980655a-21b5-4c9d-8c"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I qualify using foreign or mixed income?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much can I borrow for a home in Curaçao?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long does the mortgage approval process usually take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do banks in Curaçao offer different mortgage terms?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What down payment should I plan for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-styl"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can any property be financed?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<h3 class=\"framer-text framer-styles-preset-v34v96\" data-sty"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need a lawyer for the property transfer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "<p class=\"framer-text framer-styles-preset-1o469ca\" data-styles-preset=\"z3LAOKmRQ\" style=\"--framer-text-color:var(--extracted-r6o4lv,"
+          }
+        }
+      ]
+    }
+  ],
+  "confidence": {
+    "FAQPage": 0.95
+  }
+}
