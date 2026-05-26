@@ -2048,7 +2048,12 @@ We provide a personalized checklist based on your situation — local income, fo
   gap:4px!important;
   overflow:visible!important;
 }
-
+/* Mobile/tablet nav logo size */
+[data-framer-name="Navigation Phone"] .framer-jt7k9l,
+[data-framer-name="Navigation Phone"] .framer-1nr2dms{width:44px!important;height:44px!important;mix-blend-mode:normal!important;overflow:visible!important}
+[data-framer-name="Navigation Phone"] .framer-1nr2dms img{width:100%!important;height:100%!important;object-fit:contain!important}
+/* Hide duplicate second logo in mobile/tablet nav */
+[data-framer-name="Navigation Phone"] .framer-1pghh9f{display:none!important}
 </style>
 <script>
 (function(){
@@ -2131,11 +2136,94 @@ We provide a personalized checklist based on your situation — local income, fo
   obs.observe(document.body, {childList:true, subtree:true});
   setTimeout(function(){ obs.disconnect(); }, 10000);
 
-  // Retry address replacement until the rolling-text spans exist (created by Framer useEffect)
-  var _addrInterval = setInterval(function(){
-    if(replaceAddress() > 0) clearInterval(_addrInterval);
+  function replaceLogoText(){
+    var count = 0;
+    document.querySelectorAll('[data-framer-name="Logo Text"]').forEach(function(el){
+      var p = el.querySelector('p');
+      if(p && /^formix$/i.test(p.textContent.trim())){
+        p.innerHTML = 'Caribbean Key<br>Mortgages';
+        el.style.whiteSpace = 'pre-line';
+        count++;
+      }
+      // Swap the small palm-tree img for favicon.png
+      var link = el.closest('[data-framer-name="Primary"]');
+      if(link){
+        var img = link.querySelector('[data-framer-name="Logo Image"] img');
+        if(img && img.src.indexOf('favicon.png') < 0){
+          img.src = '/assets/favicon.png';
+          img.removeAttribute('srcset');
+          img.setAttribute('sizes','38px');
+        }
+      }
+    });
+    return count;
+  }
+
+  function fixMobileNav(){
+    // Hide "Work" and its adjacent divider line
+    document.querySelectorAll('a[href="./#work"]').forEach(function(a){
+      var item = a.closest('[data-framer-name="Nav Link"]');
+      if(item){
+        item.style.display = 'none';
+        var nextLine = item.nextElementSibling;
+        if(nextLine && nextLine.getAttribute('data-framer-name') === 'Line') nextLine.style.display = 'none';
+      }
+    });
+    // Rename "Pricing" → "Process"
+    document.querySelectorAll('[data-framer-name="Nav Link"] a[href="./#process"]').forEach(function(a){
+      if(/pricing/i.test(a.textContent)) a.textContent = 'Process';
+    });
+    // Rename "Reviews" → "Clients"
+    document.querySelectorAll('[data-framer-name="Nav Link"] a[href="./#reviews"]').forEach(function(a){
+      if(/reviews/i.test(a.textContent)) a.textContent = 'Clients';
+    });
+    // Fix CTA button: link to #contact not #process
+    document.querySelectorAll('[data-framer-name="Buttons"] a[href="./#process"]').forEach(function(a){
+      a.setAttribute('href', './#contact');
+    });
+  }
+
+  // Fix mobile nav items each time the hamburger is clicked (menu is lazy-rendered by React)
+  document.addEventListener('click', function(e){
+    if(e.target.closest('[data-framer-name="Menu icon"]')){
+      setTimeout(fixMobileNav, 500);
+    }
+  }, true);
+
+  // Retry replacements until React-rendered elements exist
+  var _addrDone = false, _logoDone = false;
+  var _fixInterval = setInterval(function(){
+    if(!_addrDone && replaceAddress() > 0) _addrDone = true;
+    if(!_logoDone && replaceLogoText() > 0) _logoDone = true;
+    if(_addrDone && _logoDone) clearInterval(_fixInterval);
   }, 200);
-  setTimeout(function(){ clearInterval(_addrInterval); }, 12000);
+  setTimeout(function(){ clearInterval(_fixInterval); }, 12000);
+
+  // Override Framer's React routing for CTA button → always go to #contact
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a');
+    if(!a) return;
+    if(a.closest('[data-framer-name="Buttons"]') && /consultation/i.test(a.textContent)){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      var el = document.getElementById('contact');
+      if(el) el.scrollIntoView({behavior:'smooth'});
+      history.pushState(null,'','#contact');
+    }
+  }, true);
+
+  // Override Framer's React routing for logo clicks → scroll to top / hero
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('[data-framer-name="Primary"]');
+    if(!a) return;
+    var href = a.getAttribute('href') || '';
+    if(href.indexOf('header') >= 0 || href === './' || href === '/'){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.scrollTo({top:0, behavior:'smooth'});
+      history.pushState(null,'',location.pathname);
+    }
+  }, true);
 
   // Fast nav scroll-spy: update hash at 30% viewport entry so Framer's pill moves sooner
   (function(){
