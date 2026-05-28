@@ -2209,14 +2209,18 @@ We provide a personalized checklist based on your situation — local income, fo
   }
 
   function fixMobileNav(){
-    // Hide "Work" and its adjacent divider line
-    document.querySelectorAll('a[href="./#work"]').forEach(function(a){
-      var item = a.closest('[data-framer-name="Nav Link"]');
-      if(item){
-        item.style.display = 'none';
-        var nextLine = item.nextElementSibling;
-        if(nextLine && nextLine.getAttribute('data-framer-name') === 'Line') nextLine.style.display = 'none';
-      }
+    // Links to hide entirely (not on desktop nav)
+    ['./#work', './#contact'].forEach(function(href){
+      document.querySelectorAll('a[href="' + href + '"]').forEach(function(a){
+        var item = a.closest('[data-framer-name="Nav Link"]');
+        if(item){
+          item.style.display = 'none';
+          var nextLine = item.nextElementSibling;
+          if(nextLine && nextLine.getAttribute('data-framer-name') === 'Line') nextLine.style.display = 'none';
+          var prevLine = item.previousElementSibling;
+          if(prevLine && prevLine.getAttribute('data-framer-name') === 'Line') prevLine.style.display = 'none';
+        }
+      });
     });
     // Rename "Pricing" → "Process"
     document.querySelectorAll('[data-framer-name="Nav Link"] a[href="./#process"]').forEach(function(a){
@@ -2226,9 +2230,12 @@ We provide a personalized checklist based on your situation — local income, fo
     document.querySelectorAll('[data-framer-name="Nav Link"] a[href="./#reviews"]').forEach(function(a){
       if(/reviews/i.test(a.textContent)) a.textContent = 'Clients';
     });
-    // Fix CTA button: link to #contact not #process
-    document.querySelectorAll('[data-framer-name="Buttons"] a[href="./#process"]').forEach(function(a){
-      a.setAttribute('href', './#contact');
+    // Fix CTA button: link to #contact not #process; align text with desktop
+    document.querySelectorAll('[data-framer-name="Buttons"] a').forEach(function(a){
+      if(a.getAttribute('href') === './#process') a.setAttribute('href', './#contact');
+      a.querySelectorAll('p').forEach(function(p){
+        if(/book.*consultation/i.test(p.textContent)) p.textContent = 'Book Free Call';
+      });
     });
   }
 
