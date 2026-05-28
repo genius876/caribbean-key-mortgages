@@ -2106,25 +2106,19 @@ We provide a personalized checklist based on your situation — local income, fo
     var h = document.getElementById('header');
     if(!h) return;
 
-    // Hero background — video on desktop, static poster on mobile (saves 7MB on mobile)
-    if(!h.querySelector('video') && !h.querySelector('.ck-hero-poster')){
-      if(window.innerWidth > 810){
-        var v = document.createElement('video');
-        v.autoplay = true; v.muted = true; v.loop = true; v.preload = 'auto';
-        v.setAttribute('playsinline','');
-        v.setAttribute('poster','assets/hero-poster.jpg');
-        v.setAttribute('style','position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0');
-        var s = document.createElement('source');
-        s.src = 'assets/hero-bg.mp4'; s.type = 'video/mp4';
-        v.appendChild(s);
-        h.insertBefore(v, h.firstChild);
-        v.play().catch(function(){});
-      } else {
-        var bg = document.createElement('div');
-        bg.className = 'ck-hero-poster';
-        bg.setAttribute('style','position:absolute;top:0;left:0;width:100%;height:100%;background:url(assets/hero-poster.jpg) center/cover no-repeat;z-index:0');
-        h.insertBefore(bg, h.firstChild);
-      }
+    // Hero video — 480p on mobile, 720p on desktop
+    if(!h.querySelector('video')){
+      var v = document.createElement('video');
+      v.autoplay = true; v.muted = true; v.loop = true; v.preload = 'auto';
+      v.setAttribute('playsinline','');
+      v.setAttribute('poster','assets/hero-poster.jpg');
+      v.setAttribute('style','position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0');
+      var s = document.createElement('source');
+      s.src = window.innerWidth <= 810 ? 'assets/hero-bg-mobile.mp4' : 'assets/hero-bg.mp4';
+      s.type = 'video/mp4';
+      v.appendChild(s);
+      h.insertBefore(v, h.firstChild);
+      v.play().catch(function(){});
     }
 
     // Container above overlay (::after is z-index:1, container must be z-index:2)
