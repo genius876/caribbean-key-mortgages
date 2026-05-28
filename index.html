@@ -2055,6 +2055,8 @@ We provide a personalized checklist based on your situation — local income, fo
 [data-framer-name="Navigation Phone"] .framer-1nr2dms img{width:100%!important;height:100%!important;object-fit:contain!important}
 /* Hide duplicate second logo in mobile/tablet nav */
 [data-framer-name="Navigation Phone"] .framer-1pghh9f{display:none!important}
+/* Ensure nav never hugs the screen edge on narrow viewports */
+[data-framer-name="Navigation Phone"] .framer-dxexlh{padding-left:max(16px,3vw)!important;padding-right:max(16px,3vw)!important;box-sizing:border-box!important}
 </style>
 <script>
 (function(){
@@ -2199,6 +2201,13 @@ We provide a personalized checklist based on your situation — local income, fo
     if(_addrDone && _logoDone) clearInterval(_fixInterval);
   }, 200);
   setTimeout(function(){ clearInterval(_fixInterval); }, 12000);
+
+  // Re-apply logo text on resize — Framer swaps breakpoint render trees which resets content
+  var _resizeTimer;
+  window.addEventListener('resize', function(){
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(replaceLogoText, 150);
+  });
 
   // Override Framer's React routing for CTA button → always go to #contact
   document.addEventListener('click', function(e){
