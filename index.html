@@ -2011,7 +2011,8 @@ We provide a personalized checklist based on your situation — local income, fo
 #header [data-framer-name="Left"] h1,
 #header [data-framer-name="Left"] p{text-align:center!important}
 #header [data-framer-name="Buttons"]{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important}
-#header [data-framer-name="Buttons"] a{width:fit-content!important;min-width:280px!important;max-width:480px!important}
+#header .framer-7spux3-container{display:flex!important;justify-content:center!important;width:100%!important}
+#header [data-framer-name="Buttons"] a{width:fit-content!important;min-width:280px!important;max-width:480px!important;margin:0 auto!important}
 @media(min-width:1200px){#header [data-framer-name="Buttons"] a{min-width:380px!important}}
 #header [data-framer-name="Left"] h1,
 #header [data-framer-name="Left"] p{color:#fff!important}
@@ -2198,20 +2199,40 @@ We provide a personalized checklist based on your situation — local income, fo
     }
   }, true);
 
-  // Retry replacements until React-rendered elements exist
+  // Watch Logo Text elements — re-replace the instant React resets content to "Formix"
+  var _logoWatchObs = null;
+  function watchLogoText() {
+    if(_logoWatchObs) _logoWatchObs.disconnect();
+    var targets = document.querySelectorAll('[data-framer-name="Logo Text"]');
+    if(!targets.length) return;
+    _logoWatchObs = new MutationObserver(function(){
+      var needsFix = false;
+      document.querySelectorAll('[data-framer-name="Logo Text"] p').forEach(function(p){
+        if(/^formix$/i.test(p.textContent.trim())) needsFix = true;
+      });
+      if(needsFix) replaceLogoText();
+    });
+    targets.forEach(function(el){
+      _logoWatchObs.observe(el, {childList:true, subtree:true, characterData:true});
+    });
+  }
+
+  // Retry replacements until React-rendered elements exist, then start watching
   var _addrDone = false, _logoDone = false;
   var _fixInterval = setInterval(function(){
     if(!_addrDone && replaceAddress() > 0) _addrDone = true;
-    if(!_logoDone && replaceLogoText() > 0) _logoDone = true;
+    if(!_logoDone && replaceLogoText() > 0){ _logoDone = true; watchLogoText(); }
     if(_addrDone && _logoDone) clearInterval(_fixInterval);
   }, 200);
   setTimeout(function(){ clearInterval(_fixInterval); }, 12000);
 
-  // Re-apply logo text on resize — fire at 50/200/500ms to catch Framer's async re-render
+  // On resize, re-watch in case Framer mounts new Logo Text nodes
   var _resizeTimers = [];
   window.addEventListener('resize', function(){
     _resizeTimers.forEach(clearTimeout);
-    _resizeTimers = [50, 200, 500].map(function(d){ return setTimeout(replaceLogoText, d); });
+    _resizeTimers = [50, 200, 500].map(function(d){
+      return setTimeout(function(){ replaceLogoText(); watchLogoText(); }, d);
+    });
   });
 
   // Override Framer's React routing for CTA button → always go to #contact
