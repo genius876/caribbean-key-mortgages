@@ -2011,7 +2011,7 @@ We provide a personalized checklist based on your situation — local income, fo
 #header [data-framer-name="Left"] h1,
 #header [data-framer-name="Left"] p{text-align:center!important}
 #header [data-framer-name="Buttons"]{align-items:center!important;justify-content:center!important}
-#header [data-framer-name="Buttons"] a{width:auto!important;min-width:240px!important}
+#header [data-framer-name="Buttons"] a{width:fit-content!important;min-width:240px!important;max-width:420px!important}
 #header [data-framer-name="Left"] h1,
 #header [data-framer-name="Left"] p{color:#fff!important}
 /* CTA button hover: white bg → accent text */
@@ -2047,6 +2047,10 @@ We provide a personalized checklist based on your situation — local income, fo
   align-items:center!important;
   gap:4px!important;
   overflow:visible!important;
+}
+/* Hero bottom padding so badge isn't clipped at tablet/mobile */
+@media (max-width:1199.98px){
+  #header .framer-174qo4y{padding-bottom:100px!important}
 }
 /* Mobile/tablet nav logo size */
 [data-framer-name="Navigation Phone"]{overflow:visible!important}
