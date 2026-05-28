@@ -2010,8 +2010,9 @@ We provide a personalized checklist based on your situation — local income, fo
 #header [data-framer-name="Heading"]{align-items:center!important}
 #header [data-framer-name="Left"] h1,
 #header [data-framer-name="Left"] p{text-align:center!important}
-#header [data-framer-name="Buttons"]{align-items:center!important;justify-content:center!important}
-#header [data-framer-name="Buttons"] a{width:fit-content!important;min-width:240px!important;max-width:420px!important}
+#header [data-framer-name="Buttons"]{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important}
+#header [data-framer-name="Buttons"] a{width:fit-content!important;min-width:280px!important;max-width:480px!important}
+@media(min-width:1200px){#header [data-framer-name="Buttons"] a{min-width:380px!important}}
 #header [data-framer-name="Left"] h1,
 #header [data-framer-name="Left"] p{color:#fff!important}
 /* CTA button hover: white bg → accent text */
@@ -2206,11 +2207,11 @@ We provide a personalized checklist based on your situation — local income, fo
   }, 200);
   setTimeout(function(){ clearInterval(_fixInterval); }, 12000);
 
-  // Re-apply logo text on resize — Framer swaps breakpoint render trees which resets content
-  var _resizeTimer;
+  // Re-apply logo text on resize — fire at 50/200/500ms to catch Framer's async re-render
+  var _resizeTimers = [];
   window.addEventListener('resize', function(){
-    clearTimeout(_resizeTimer);
-    _resizeTimer = setTimeout(replaceLogoText, 150);
+    _resizeTimers.forEach(clearTimeout);
+    _resizeTimers = [50, 200, 500].map(function(d){ return setTimeout(replaceLogoText, d); });
   });
 
   // Override Framer's React routing for CTA button → always go to #contact
