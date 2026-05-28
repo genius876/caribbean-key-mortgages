@@ -2308,6 +2308,13 @@ We provide a personalized checklist based on your situation — local income, fo
     obs.observe(section, {childList:true, subtree:true, attributes:true, attributeFilter:['src']});
   }
 
+  // Lock the page title — Framer's JS resets it to "Formix" after hydration
+  var CORRECT_TITLE = 'Caribbean Key Mortgages | Home Loans & Mortgage Advisors in Curaçao';
+  function enforceTitle(){ if(document.title !== CORRECT_TITLE) document.title = CORRECT_TITLE; }
+  enforceTitle();
+  var _titleObs = new MutationObserver(enforceTitle);
+  _titleObs.observe(document.querySelector('title') || document.head, {childList:true, subtree:true, characterData:true});
+
   // Retry replacements until React-rendered elements exist, then start watching
   var _addrDone = false, _logoDone = false, _tickerStarted = false;
   var _fixInterval = setInterval(function(){
