@@ -2209,19 +2209,26 @@ We provide a personalized checklist based on your situation — local income, fo
   }
 
   function fixMobileNav(){
-    // Links to hide entirely (not on desktop nav)
-    ['./#work', './#contact'].forEach(function(href){
+    // Hide a nav item and exactly one of its adjacent divider lines:
+    //   hideLineSide='next'  → middle item: keep the line BEFORE (it becomes the divider to the next visible item)
+    //   hideLineSide='prev'  → end item:    hide the line BEFORE (no orphan trailing divider)
+    function hideNavItem(href, hideLineSide){
       document.querySelectorAll('a[href="' + href + '"]').forEach(function(a){
         var item = a.closest('[data-framer-name="Nav Link"]');
-        if(item){
-          item.style.display = 'none';
-          var nextLine = item.nextElementSibling;
-          if(nextLine && nextLine.getAttribute('data-framer-name') === 'Line') nextLine.style.display = 'none';
-          var prevLine = item.previousElementSibling;
-          if(prevLine && prevLine.getAttribute('data-framer-name') === 'Line') prevLine.style.display = 'none';
+        if(!item) return;
+        item.style.display = 'none';
+        var next = item.nextElementSibling;
+        var prev = item.previousElementSibling;
+        if(hideLineSide === 'next' && next && next.getAttribute('data-framer-name') === 'Line'){
+          next.style.display = 'none';
+        }
+        if(hideLineSide === 'prev' && prev && prev.getAttribute('data-framer-name') === 'Line'){
+          prev.style.display = 'none';
         }
       });
-    });
+    }
+    hideNavItem('./#work',    'next'); // middle item — hide line after Work; line before stays as Benefits→Process divider
+    hideNavItem('./#contact', 'prev'); // end item   — hide line before Contact; no trailing divider after FAQs
     // Rename "Pricing" → "Process"
     document.querySelectorAll('[data-framer-name="Nav Link"] a[href="./#process"]').forEach(function(a){
       if(/pricing/i.test(a.textContent)) a.textContent = 'Process';
