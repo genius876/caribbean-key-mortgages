@@ -2096,6 +2096,11 @@ We provide a personalized checklist based on your situation — local income, fo
 [data-framer-name="Navigation Phone"] .framer-1pghh9f{display:none!important}
 /* Ensure nav never hugs the screen edge on narrow viewports */
 [data-framer-name="Navigation Phone"] .framer-dxexlh{padding-left:max(16px,3vw)!important;padding-right:max(16px,3vw)!important;box-sizing:border-box!important}
+/* Hide Contact + Work from mobile nav via CSS — instant, no JS timing dependency */
+[data-framer-name="Navigation Phone"] [data-framer-name="Nav Link"]:has(a[href="./#contact"]),
+[data-framer-name="Navigation Phone"] [data-framer-name="Nav Link"]:has(a[href="./#work"]){display:none!important}
+/* Hide the orphan divider that would follow FAQs once Contact is gone */
+[data-framer-name="Navigation Phone"] [data-framer-name="Nav Link"]:has(a[href="./#faqs"]) ~ [data-framer-name="Line"]{display:none!important}
 /* Hide logo text until JS has replaced "Formix" — prevents flash on slow mobile */
 [data-framer-name="Logo Text"] p{opacity:0;transition:opacity 0.15s ease}
 [data-framer-name="Logo Text"] p.ck-text-ready{opacity:1!important}
@@ -2246,10 +2251,34 @@ We provide a personalized checklist based on your situation — local income, fo
     });
   }
 
-  // Fix mobile nav items each time the hamburger is clicked (menu is lazy-rendered by React)
+  // Watch Navigation Phone for any DOM additions — fires the instant Framer renders menu items
+  (function(){
+    var phone = document.querySelector('[data-framer-name="Navigation Phone"]');
+    function watchPhone(el){
+      var obs = new MutationObserver(function(mutations){
+        var added = mutations.some(function(m){ return m.addedNodes.length > 0; });
+        if(added) fixMobileNav();
+      });
+      obs.observe(el, {childList: true, subtree: true});
+    }
+    if(phone){
+      watchPhone(phone);
+    } else {
+      // Nav Phone not yet in DOM — wait for it
+      var bodyObs = new MutationObserver(function(){
+        var el = document.querySelector('[data-framer-name="Navigation Phone"]');
+        if(el){ bodyObs.disconnect(); watchPhone(el); }
+      });
+      bodyObs.observe(document.body, {childList: true, subtree: true});
+    }
+  })();
+
+  // Keep click listener as fallback with staggered retries for slow devices
   document.addEventListener('click', function(e){
     if(e.target.closest('[data-framer-name="Menu icon"]')){
-      setTimeout(fixMobileNav, 500);
+      setTimeout(fixMobileNav, 300);
+      setTimeout(fixMobileNav, 800);
+      setTimeout(fixMobileNav, 1500);
     }
   }, true);
 
