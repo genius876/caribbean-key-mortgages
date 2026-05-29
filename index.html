@@ -2096,11 +2096,12 @@ We provide a personalized checklist based on your situation — local income, fo
 [data-framer-name="Navigation Phone"] .framer-1pghh9f{display:none!important}
 /* Ensure nav never hugs the screen edge on narrow viewports */
 [data-framer-name="Navigation Phone"] .framer-dxexlh{padding-left:max(16px,3vw)!important;padding-right:max(16px,3vw)!important;box-sizing:border-box!important}
-/* Hide Contact + Work from mobile nav via CSS — instant, no JS timing dependency */
-[data-framer-name="Navigation Phone"] [data-framer-name="Nav Link"]:has(a[href="./#contact"]),
-[data-framer-name="Navigation Phone"] [data-framer-name="Nav Link"]:has(a[href="./#work"]){display:none!important}
-/* Hide the orphan divider that would follow FAQs once Contact is gone */
-[data-framer-name="Navigation Phone"] [data-framer-name="Nav Link"]:has(a[href="./#faqs"]) ~ [data-framer-name="Line"]{display:none!important}
+/* Hide Contact + Work from mobile nav — document-wide so React portals are covered */
+/* Framer renders the open hamburger menu as a portal at document.body, not inside Navigation Phone */
+[data-framer-name="Nav Link"]:has(a[href*="contact"]),
+[data-framer-name="Nav Link"]:has(a[href*="work"]){display:none!important}
+/* Hide the orphan divider after FAQs once Contact is gone */
+[data-framer-name="Nav Link"]:has(a[href*="faqs"]) ~ [data-framer-name="Line"]{display:none!important}
 /* Hide logo text until JS has replaced "Formix" — prevents flash on slow mobile */
 [data-framer-name="Logo Text"] p{opacity:0;transition:opacity 0.15s ease}
 [data-framer-name="Logo Text"] p.ck-text-ready{opacity:1!important}
@@ -2214,63 +2215,60 @@ We provide a personalized checklist based on your situation — local income, fo
   }
 
   function fixMobileNav(){
-    // Hide a nav item and exactly one of its adjacent divider lines:
-    //   hideLineSide='next'  → middle item: keep the line BEFORE (it becomes the divider to the next visible item)
-    //   hideLineSide='prev'  → end item:    hide the line BEFORE (no orphan trailing divider)
-    function hideNavItem(href, hideLineSide){
-      document.querySelectorAll('a[href="' + href + '"]').forEach(function(a){
-        var item = a.closest('[data-framer-name="Nav Link"]');
-        if(!item) return;
-        item.style.display = 'none';
-        var next = item.nextElementSibling;
+    // Framer renders the open hamburger menu as a React portal at document.body level,
+    // NOT as a child of Navigation Phone — so we must query document-wide.
+    document.querySelectorAll('[data-framer-name="Nav Link"]').forEach(function(item){
+      var a = item.querySelector('a');
+      if(!a) return;
+      var text = a.textContent.trim().toLowerCase();
+      var href = (a.getAttribute('href') || '').toLowerCase();
+      var isContact = text === 'contact' || href.indexOf('contact') >= 0;
+      var isWork    = text === 'work'    || href.indexOf('work')    >= 0;
+      if(!isContact && !isWork) return;
+      item.style.display = 'none';
+      if(isContact){
         var prev = item.previousElementSibling;
-        if(hideLineSide === 'next' && next && next.getAttribute('data-framer-name') === 'Line'){
-          next.style.display = 'none';
-        }
-        if(hideLineSide === 'prev' && prev && prev.getAttribute('data-framer-name') === 'Line'){
-          prev.style.display = 'none';
-        }
-      });
-    }
-    hideNavItem('./#work',    'next'); // middle item — hide line after Work; line before stays as Benefits→Process divider
-    hideNavItem('./#contact', 'prev'); // end item   — hide line before Contact; no trailing divider after FAQs
-    // Rename "Pricing" → "Process"
-    document.querySelectorAll('[data-framer-name="Nav Link"] a[href="./#process"]').forEach(function(a){
-      if(/pricing/i.test(a.textContent)) a.textContent = 'Process';
+        if(prev && prev.getAttribute('data-framer-name') === 'Line') prev.style.display = 'none';
+      }
+      if(isWork){
+        var next = item.nextElementSibling;
+        if(next && next.getAttribute('data-framer-name') === 'Line') next.style.display = 'none';
+      }
     });
-    // Rename "Reviews" → "Clients"
-    document.querySelectorAll('[data-framer-name="Nav Link"] a[href="./#reviews"]').forEach(function(a){
-      if(/reviews/i.test(a.textContent)) a.textContent = 'Clients';
+
+    document.querySelectorAll('[data-framer-name="Nav Link"] a').forEach(function(a){
+      var href = a.getAttribute('href') || '';
+      if(href.indexOf('process') >= 0 && /pricing/i.test(a.textContent)) a.textContent = 'Process';
+      if(href.indexOf('reviews') >= 0 && /reviews/i.test(a.textContent)) a.textContent = 'Clients';
     });
-    // Fix CTA button: link to #contact not #process; align text with desktop
+
     document.querySelectorAll('[data-framer-name="Buttons"] a').forEach(function(a){
-      if(a.getAttribute('href') === './#process') a.setAttribute('href', './#contact');
+      var href = a.getAttribute('href') || '';
+      if(href.indexOf('process') >= 0) a.setAttribute('href', href.replace('process','contact'));
       a.querySelectorAll('p').forEach(function(p){
         if(/book.*consultation/i.test(p.textContent)) p.textContent = 'Book Free Call';
       });
     });
   }
 
-  // Watch Navigation Phone for any DOM additions — fires the instant Framer renders menu items
+  // Watch document.body for portal additions — Framer renders the open menu as a React portal
+  // at document root, not inside Navigation Phone, so we must observe at the body level.
   (function(){
-    var phone = document.querySelector('[data-framer-name="Navigation Phone"]');
-    function watchPhone(el){
-      var obs = new MutationObserver(function(mutations){
-        var added = mutations.some(function(m){ return m.addedNodes.length > 0; });
-        if(added) fixMobileNav();
+    var portalObs = new MutationObserver(function(mutations){
+      var relevant = mutations.some(function(m){
+        for(var i = 0; i < m.addedNodes.length; i++){
+          var n = m.addedNodes[i];
+          if(n.nodeType === 1){
+            // A Nav Link was added, or a container that holds Nav Links
+            if(n.getAttribute && (n.getAttribute('data-framer-name') === 'Nav Link' ||
+               n.querySelector && n.querySelector('[data-framer-name="Nav Link"]'))) return true;
+          }
+        }
+        return false;
       });
-      obs.observe(el, {childList: true, subtree: true});
-    }
-    if(phone){
-      watchPhone(phone);
-    } else {
-      // Nav Phone not yet in DOM — wait for it
-      var bodyObs = new MutationObserver(function(){
-        var el = document.querySelector('[data-framer-name="Navigation Phone"]');
-        if(el){ bodyObs.disconnect(); watchPhone(el); }
-      });
-      bodyObs.observe(document.body, {childList: true, subtree: true});
-    }
+      if(relevant) fixMobileNav();
+    });
+    portalObs.observe(document.body, {childList: true, subtree: true});
   })();
 
   // Keep click listener as fallback with staggered retries for slow devices
