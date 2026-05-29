@@ -2105,6 +2105,8 @@ We provide a personalized checklist based on your situation — local income, fo
 /* Hide logo text until JS has replaced "Formix" — prevents flash on slow mobile */
 [data-framer-name="Logo Text"] p{opacity:0;transition:opacity 0.15s ease}
 [data-framer-name="Logo Text"] p.ck-text-ready{opacity:1!important}
+/* Hide Website field from contact form — not relevant for a mortgage company */
+.framer-1pyteke{display:none!important}
 </style>
 <script>
 (function(){
@@ -2459,6 +2461,63 @@ We provide a personalized checklist based on your situation — local income, fo
       if(!img.getAttribute('loading')) img.setAttribute('loading','lazy');
     });
   });
+
+  // ===== CONTACT FORM → FORMSPREE =====
+  // Replace YOUR_FORMSPREE_ID with the ID from your Formspree dashboard (formspree.io)
+  var FORMSPREE_ID = 'YOUR_FORMSPREE_ID';
+
+  function setupContactForm() {
+    document.querySelectorAll('form.framer-785txj').forEach(function(form) {
+      if (form._ckFormBound) return;
+      form._ckFormBound = true;
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        var btn = form.querySelector('button[type="submit"]');
+        var btnP = btn ? btn.querySelector('p') : null;
+        var originalText = btnP ? btnP.textContent : '';
+        if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
+        if (btnP) btnP.textContent = 'Sending…';
+
+        var data = new FormData(form);
+        data.delete('Websiste'); // remove leftover website field
+
+        fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function(res) {
+          if (!res.ok) throw new Error('failed');
+          // Show success state in place of the form
+          var parent = form.parentNode;
+          var msg = document.createElement('div');
+          msg.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;min-height:200px;';
+          msg.innerHTML =
+            '<p style="font-size:1.25em;font-weight:600;color:#fff;margin:0 0 10px">Message sent ✓</p>' +
+            '<p style="color:rgba(255,255,255,0.6);font-size:0.9em;margin:0">Thank you for reaching out. We\'ll be in touch within 1 business day.</p>';
+          form.style.display = 'none';
+          parent.appendChild(msg);
+        })
+        .catch(function() {
+          if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+          if (btnP) btnP.textContent = originalText || 'Send Message';
+          alert('Something went wrong. Please try again or email us directly at lotte@caribbean-key.com');
+        });
+      }, true); // capture phase — runs before Framer\'s internal handler
+    });
+  }
+
+  setupContactForm();
+  // Re-bind after any React re-render of the contact section
+  (function(){
+    var contact = document.getElementById('contact');
+    if (!contact) return;
+    var _formObs = new MutationObserver(setupContactForm);
+    _formObs.observe(contact, { childList: true, subtree: true });
+  })();
+
 })();
 </script>
 </body></html>
