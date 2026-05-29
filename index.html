@@ -2379,15 +2379,47 @@ We provide a personalized checklist based on your situation — local income, fo
   _titleObs.observe(document.querySelector('title') || document.head, {childList:true, subtree:true, characterData:true});
 
   // Retry replacements until React-rendered elements exist, then start watching
+  function fixClientHeading(){
+    document.querySelectorAll('p, h1, h2, h3, h4').forEach(function(el){
+      if(el.childNodes.length === 1 && el.childNodes[0].nodeType === 3){
+        if(/why teams choose to/i.test(el.textContent)){
+          el.textContent = el.textContent.replace(/teams/i, function(m){
+            return m[0] === m[0].toUpperCase() ? 'People' : 'people';
+          });
+        }
+      } else {
+        el.childNodes.forEach(function(node){
+          if(node.nodeType === 3 && /teams/i.test(node.textContent)){
+            var parent = node.parentElement;
+            if(parent && /why teams choose to/i.test(parent.textContent)){
+              node.textContent = node.textContent.replace(/teams/i, function(m){
+                return m[0] === m[0].toUpperCase() ? 'People' : 'people';
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+
   var _addrDone = false, _logoDone = false, _tickerStarted = false;
   var _fixInterval = setInterval(function(){
     if(!_addrDone && replaceAddress() > 0){ _addrDone = true; watchAddress(); }
     if(!_logoDone && replaceLogoText() > 0){ _logoDone = true; watchLogoText(); }
     if(!_tickerStarted && document.getElementById('logos')){ _tickerStarted = true; watchTickerLogos(); }
     replaceTickerLogos();
+    fixClientHeading();
     if(_addrDone && _logoDone) clearInterval(_fixInterval);
   }, 200);
   setTimeout(function(){ clearInterval(_fixInterval); }, 12000);
+
+  // Persistent watcher for the clients heading revert
+  (function(){
+    var reviews = document.getElementById('reviews');
+    if(!reviews) return;
+    var _headingObs = new MutationObserver(fixClientHeading);
+    _headingObs.observe(reviews, {childList:true, subtree:true, characterData:true});
+  })();
 
   // Keep patching ticker for 30s to outlast React's reconciliation cycles
   var _tickerPersist = setInterval(replaceTickerLogos, 400);
