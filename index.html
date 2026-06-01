@@ -2111,9 +2111,9 @@ We provide a personalized checklist based on your situation — local income, fo
 .framer-Yop3m.framer-tr7ctu,.framer-tr7ctu{width:210px!important;height:90px!important}
 /* Custom FAQ items: answer text fills full width, no 600px cap */
 .ck-faq-extra .framer-1n5xvro{max-width:100%!important;width:100%!important}
-/* Custom FAQ animation */
-.ck-faq-answer{display:block!important;overflow:hidden!important;max-height:0!important;opacity:0!important;transition:max-height 0.35s ease,opacity 0.25s ease!important}
-.ck-faq-item.framer-v-43ss71 .ck-faq-answer{max-height:800px!important;opacity:1!important}
+/* Custom FAQ animation — display toggled by JS; height measured for smooth transition */
+.ck-faq-answer{display:none!important}
+.ck-faq-answer.ck-animating,.ck-faq-item.framer-v-43ss71 .ck-faq-answer{display:flex!important}
 </style>
 <script>
 (function(){
@@ -2637,10 +2637,29 @@ We provide a personalized checklist based on your situation — local income, fo
       var ans = item.querySelector('.ck-faq-answer');
       var b1  = item.querySelector('.framer-1nesfnl');
       var b2  = item.querySelector('.framer-ehsc30');
+      var currentH = ans ? ans.offsetHeight : 0;
+      if (ans && currentH > 0) {
+        ans.style.height = currentH + 'px';
+        ans.style.overflow = 'hidden';
+        ans.classList.add('ck-animating');
+        void ans.offsetHeight;
+      }
       item.classList.remove('framer-v-43ss71');
       item.classList.add('framer-v-z48pug');
       if (b1) b1.style.backgroundColor = CLOSE_BG;
       if (b2) { b2.style.backgroundColor = CLOSE_BG; b2.style.opacity = '1'; b2.style.transform = 'none'; }
+      if (ans && currentH > 0) {
+        ans.style.transition = 'height 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.2s ease';
+        ans.style.height = '0px';
+        ans.style.opacity = '0';
+        setTimeout(function() {
+          ans.classList.remove('ck-animating');
+          ans.style.height = '';
+          ans.style.overflow = '';
+          ans.style.opacity = '';
+          ans.style.transition = '';
+        }, 320);
+      }
     }
 
     function bindToggle(item) {
@@ -2654,7 +2673,6 @@ We provide a personalized checklist based on your situation — local income, fo
         if (isOpen) {
           closeCustomItem(item);
         } else {
-          // Accordion: close everything else in this FAQ section first
           var section = item.closest('[data-framer-name="Section FAQs"]');
           if (section) {
             section.querySelectorAll('.ck-faq-item.framer-v-43ss71').forEach(function(other) {
@@ -2666,6 +2684,27 @@ We provide a personalized checklist based on your situation — local income, fo
           }
           item.classList.remove('framer-v-z48pug');
           item.classList.add('framer-v-43ss71');
+          if (answer) {
+            answer.classList.add('ck-animating');
+            answer.style.height = 'auto';
+            answer.style.overflow = 'hidden';
+            answer.style.opacity = '0';
+            answer.style.transition = 'none';
+            void answer.offsetHeight;
+            var targetH = answer.offsetHeight;
+            answer.style.height = '0px';
+            void answer.offsetHeight;
+            answer.style.transition = 'height 0.35s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease';
+            answer.style.height = targetH + 'px';
+            answer.style.opacity = '1';
+            setTimeout(function() {
+              answer.classList.remove('ck-animating');
+              answer.style.height = '';
+              answer.style.overflow = '';
+              answer.style.opacity = '';
+              answer.style.transition = '';
+            }, 380);
+          }
           if (bar1) bar1.style.backgroundColor = OPEN_BG;
           if (bar2) { bar2.style.backgroundColor = OPEN_BG; bar2.style.opacity = '0'; bar2.style.transform = 'rotate(90deg)'; }
         }
@@ -2698,12 +2737,10 @@ We provide a personalized checklist based on your situation — local income, fo
     syncAllSections();
 
     document.querySelectorAll('[data-framer-name="Section FAQs"]').forEach(function(section) {
-      // Re-injection observer
       new MutationObserver(function() {
         if (!section.querySelector('.ck-faq-extra')) injectIntoSection(section);
       }).observe(section, { childList: true, subtree: true });
 
-      // Accordion bridge: when a native Framer item opens, close our custom items
       new MutationObserver(function(mutations) {
         mutations.forEach(function(m) {
           var el = m.target;
