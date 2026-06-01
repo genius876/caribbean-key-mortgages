@@ -2617,11 +2617,14 @@ We provide a personalized checklist based on your situation — local income, fo
 
   // FAQ: click toggle + re-injection guard for custom items
   (function(){
-    // Capture SSR items synchronously before React hydrates them away
+    // Only capture the 4 items from the FIRST FAQ section to use as templates
+    var _firstSection = document.querySelector('[data-framer-name="Section FAQs"]');
     var _faqTemplates = [];
-    document.querySelectorAll('.ck-faq-extra').forEach(function(el) {
-      _faqTemplates.push(el.cloneNode(true));
-    });
+    if (_firstSection) {
+      _firstSection.querySelectorAll('.ck-faq-extra').forEach(function(el) {
+        _faqTemplates.push(el.cloneNode(true));
+      });
+    }
 
     var OPEN_BG  = 'var(--token-c2c4dd37-49da-448f-83b8-7513387cf04e, rgb(255, 55, 0))';
     var CLOSE_BG = 'var(--token-86c07165-dbe2-4f83-b13c-71fddf831442, rgb(21, 22, 25))';
@@ -2655,6 +2658,7 @@ We provide a personalized checklist based on your situation — local income, fo
       var origItems = section.querySelectorAll('.framer-18cbvfk-container');
       if (!origItems.length) return;
       var parent = origItems[origItems.length - 1].parentNode;
+      // Remove any stale copies first
       parent.querySelectorAll('.ck-faq-extra').forEach(function(el) {
         if (el.parentNode) el.parentNode.removeChild(el);
       });
@@ -2666,14 +2670,28 @@ We provide a personalized checklist based on your situation — local income, fo
       });
     }
 
-    document.querySelectorAll('.ck-faq-item').forEach(bindToggle);
+    function syncAllSections() {
+      document.querySelectorAll('[data-framer-name="Section FAQs"]').forEach(function(section) {
+        if (!section.querySelector('.ck-faq-extra')) injectIntoSection(section);
+      });
+    }
 
-    // Watch all 3 breakpoint FAQ sections for React re-renders
+    // Bind toggles on SSR items, then run sync immediately + watch with observer + interval
+    document.querySelectorAll('.ck-faq-item').forEach(bindToggle);
+    syncAllSections();
+
     document.querySelectorAll('[data-framer-name="Section FAQs"]').forEach(function(section) {
       new MutationObserver(function() {
         if (!section.querySelector('.ck-faq-extra')) injectIntoSection(section);
       }).observe(section, { childList: true, subtree: true });
     });
+
+    // Interval fallback for the first 5 seconds after React finishes hydrating
+    var _faqTries = 0;
+    var _faqPoll = setInterval(function() {
+      syncAllSections();
+      if (++_faqTries >= 10) clearInterval(_faqPoll);
+    }, 500);
   })();
 
 })();
