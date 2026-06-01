@@ -2632,6 +2632,8 @@ We provide a personalized checklist based on your situation — local income, fo
 
     var OPEN_BG  = 'var(--token-c2c4dd37-49da-448f-83b8-7513387cf04e, rgb(255, 55, 0))';
     var CLOSE_BG = 'var(--token-86c07165-dbe2-4f83-b13c-71fddf831442, rgb(21, 22, 25))';
+    var GAP_PX   = 24; // flex gap between question row and answer div (from .framer-caqku6)
+    var PAD_PX   = 24; // padding-top on .framer-pxtulu answer div
 
     function closeCustomItem(item) {
       var ans = item.querySelector('.ck-faq-answer');
@@ -2639,26 +2641,32 @@ We provide a personalized checklist based on your situation — local income, fo
       var b2  = item.querySelector('.framer-ehsc30');
       var currentH = ans ? ans.offsetHeight : 0;
       if (ans && currentH > 0) {
+        // Lock computed paddingTop so we can animate it to 0 (border-box: padding counts toward height)
+        ans.style.paddingTop = PAD_PX + 'px';
         ans.style.height = currentH + 'px';
         ans.style.overflow = 'hidden';
         ans.classList.add('ck-animating');
-        void ans.offsetHeight;
+        void ans.offsetHeight; // flush
       }
       item.classList.remove('framer-v-43ss71');
       item.classList.add('framer-v-z48pug');
       if (b1) b1.style.backgroundColor = CLOSE_BG;
       if (b2) { b2.style.backgroundColor = CLOSE_BG; b2.style.opacity = '1'; b2.style.transform = 'none'; }
       if (ans && currentH > 0) {
-        ans.style.transition = 'height 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.2s ease';
-        ans.style.height = '0px';
-        ans.style.opacity = '0';
-        setTimeout(function() {
-          ans.classList.remove('ck-animating');
-          ans.style.height = '';
-          ans.style.overflow = '';
-          ans.style.opacity = '';
-          ans.style.transition = '';
-        }, 320);
+        requestAnimationFrame(function() {
+          ans.style.transition = 'height 0.28s cubic-bezier(0.4,0,1,1),padding-top 0.28s cubic-bezier(0.4,0,1,1),opacity 0.2s ease-in';
+          ans.style.height = '0px';
+          ans.style.paddingTop = '0px';
+          ans.style.opacity = '0';
+          setTimeout(function() {
+            ans.classList.remove('ck-animating');
+            ans.style.height = '';
+            ans.style.overflow = '';
+            ans.style.paddingTop = '';
+            ans.style.opacity = '';
+            ans.style.transition = '';
+          }, 300);
+        });
       }
     }
 
@@ -2685,25 +2693,34 @@ We provide a personalized checklist based on your situation — local income, fo
           item.classList.remove('framer-v-z48pug');
           item.classList.add('framer-v-43ss71');
           if (answer) {
+            // Make visible to measure natural height (padding from CSS is in effect)
             answer.classList.add('ck-animating');
-            answer.style.height = 'auto';
+            answer.style.transition = 'none';
             answer.style.overflow = 'hidden';
             answer.style.opacity = '0';
-            answer.style.transition = 'none';
+            answer.style.paddingTop = '';  // clear inline → CSS padding:24px takes over
+            answer.style.height = 'auto';
             void answer.offsetHeight;
-            var targetH = answer.offsetHeight;
+            var targetH = answer.offsetHeight; // full height including 24px padding
+            // Collapse to true zero (override padding so border-box gives 0, not 24px)
+            answer.style.paddingTop = '0px';
             answer.style.height = '0px';
-            void answer.offsetHeight;
-            answer.style.transition = 'height 0.35s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease';
-            answer.style.height = targetH + 'px';
-            answer.style.opacity = '1';
-            setTimeout(function() {
-              answer.classList.remove('ck-animating');
-              answer.style.height = '';
-              answer.style.overflow = '';
-              answer.style.opacity = '';
-              answer.style.transition = '';
-            }, 380);
+            void answer.offsetHeight; // flush
+            // Animate in next frame so browser commits the 0-state before transition
+            requestAnimationFrame(function() {
+              answer.style.transition = 'height 0.36s cubic-bezier(0,0,0.2,1),padding-top 0.36s cubic-bezier(0,0,0.2,1),opacity 0.28s ease';
+              answer.style.height = targetH + 'px';
+              answer.style.paddingTop = PAD_PX + 'px';
+              answer.style.opacity = '1';
+              setTimeout(function() {
+                answer.classList.remove('ck-animating');
+                answer.style.height = '';
+                answer.style.overflow = '';
+                answer.style.paddingTop = '';
+                answer.style.opacity = '';
+                answer.style.transition = '';
+              }, 400);
+            });
           }
           if (bar1) bar1.style.backgroundColor = OPEN_BG;
           if (bar2) { bar2.style.backgroundColor = OPEN_BG; bar2.style.opacity = '0'; bar2.style.transform = 'rotate(90deg)'; }
