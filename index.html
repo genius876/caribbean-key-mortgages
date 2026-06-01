@@ -2565,6 +2565,56 @@ We provide a personalized checklist based on your situation — local income, fo
     _formObs.observe(contact, { childList: true, subtree: true });
   })();
 
+  // Speed up the logo ticker.
+  // Framer drives the ticker <ul> via its own RAF loop at a fixed speed.
+  // We block Framer's transform setter and run our own RAF at a higher speed.
+  (function(){
+    var PX_PER_SEC = 220; // pixels per second — raise to go faster, lower to slow down
+
+    function startTicker(ul) {
+      if (ul._ckTicker) return;
+      ul._ckTicker = true;
+
+      // loopWidth = the distance after which the content repeats seamlessly.
+      // Framer clones the item list once, so total scrollWidth = 2 × one set.
+      var loopWidth = Math.round(ul.scrollWidth / 2);
+      if (loopWidth < 50) { ul._ckTicker = false; return; } // not ready yet
+
+      // Block Framer's RAF from overwriting our transform.
+      // ul.style.setProperty() bypasses this override, so our RAF still works.
+      try {
+        Object.defineProperty(ul.style, 'transform', {
+          set: function() {},
+          get: function() { return ul.style.getPropertyValue('transform') || 'none'; },
+          configurable: true
+        });
+      } catch(e) {}
+
+      var x = 0;
+      var prev = null;
+      function frame(ts) {
+        if (prev !== null) {
+          x -= PX_PER_SEC * (ts - prev) / 1000;
+          if (x <= -loopWidth) x += loopWidth;
+        }
+        prev = ts;
+        ul.style.setProperty('transform', 'translateX(' + x.toFixed(1) + 'px)');
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    var _attempts = 0;
+    var _t = setInterval(function() {
+      var ready = 0;
+      document.querySelectorAll('#logos section ul').forEach(function(ul) {
+        if (ul._ckTicker) { ready++; return; }
+        if (ul.scrollWidth > 100) { startTicker(ul); ready++; }
+      });
+      if (ready >= 3 || ++_attempts > 60) clearInterval(_t);
+    }, 200);
+  })();
+
 })();
 </script>
 </body></html>
