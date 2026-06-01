@@ -2111,9 +2111,12 @@ We provide a personalized checklist based on your situation — local income, fo
 .framer-Yop3m.framer-tr7ctu,.framer-tr7ctu{width:210px!important;height:90px!important}
 /* Custom FAQ items: answer text fills full width, no 600px cap */
 .ck-faq-extra .framer-1n5xvro{max-width:100%!important;width:100%!important}
-/* Custom FAQ animation — display toggled by JS; height measured for smooth transition */
+/* Custom FAQ animation — outer item height driven; display toggled by ck-animating */
 .ck-faq-answer{display:none!important}
 .ck-faq-answer.ck-animating,.ck-faq-item.framer-v-43ss71 .ck-faq-answer{display:flex!important}
+/* Icon animation: match native Framer Motion timing */
+.ck-faq-item .framer-1nesfnl{transition:background-color 0.2s cubic-bezier(0.4,0,0.2,1)}
+.ck-faq-item .framer-ehsc30{transition:background-color 0.2s cubic-bezier(0.4,0,0.2,1),opacity 0.2s cubic-bezier(0.4,0,0.2,1),transform 0.2s cubic-bezier(0.4,0,0.2,1)}
 </style>
 <script>
 (function(){
@@ -2632,46 +2635,46 @@ We provide a personalized checklist based on your situation — local income, fo
 
     var OPEN_BG  = 'var(--token-c2c4dd37-49da-448f-83b8-7513387cf04e, rgb(255, 55, 0))';
     var CLOSE_BG = 'var(--token-86c07165-dbe2-4f83-b13c-71fddf831442, rgb(21, 22, 25))';
-    // .framer-caqku6 has gap:24px between question row and answer div
-    // .framer-pxtulu has padding:24px 0 0 — must animate to prevent border-box padding jump
+    // flex gap between question row and answer div (.framer-caqku6 gap:24px)
     var GAP_PX = 24;
-    var PAD_PX = 24;
 
     function closeCustomItem(item) {
       var ans = item.querySelector('.ck-faq-answer');
       var b1  = item.querySelector('.framer-1nesfnl');
       var b2  = item.querySelector('.framer-ehsc30');
-      var currentH = ans ? ans.offsetHeight : 0;
-      if (ans && currentH > 0) {
-        ans.style.paddingTop = PAD_PX + 'px';
-        ans.style.marginTop  = '0px';
-        ans.style.height     = currentH + 'px';
-        ans.style.overflow   = 'hidden';
-        ans.classList.add('ck-animating');
-        void ans.offsetHeight;
+
+      // Use stored closed height (set when item was opened) or compute from current layout
+      var closedH = item._ckClosedH;
+      if (!closedH) {
+        var ansH = ans ? ans.offsetHeight : 0;
+        closedH = item.offsetHeight - GAP_PX - ansH;
       }
+      var currentH = item.offsetHeight; // may be mid-open-animation
+
+      // Cancel any running transition and lock at current height
+      item.style.transition = 'none';
+      item.style.height = currentH + 'px';
+      void item.offsetHeight;
+
+      // Keep answer visible during collapse (ck-animating maintains display:flex)
+      if (ans) ans.classList.add('ck-animating');
+
       item.classList.remove('framer-v-43ss71');
       item.classList.add('framer-v-z48pug');
       if (b1) b1.style.backgroundColor = CLOSE_BG;
       if (b2) { b2.style.backgroundColor = CLOSE_BG; b2.style.opacity = '1'; b2.style.transform = 'none'; }
-      if (ans && currentH > 0) {
-        requestAnimationFrame(function() {
-          ans.style.transition = 'height 0.28s cubic-bezier(0.4,0,1,1),padding-top 0.28s cubic-bezier(0.4,0,1,1),margin-top 0.28s cubic-bezier(0.4,0,1,1),opacity 0.2s ease-in';
-          ans.style.height     = '0px';
-          ans.style.paddingTop = '0px';
-          ans.style.marginTop  = (-GAP_PX) + 'px';
-          ans.style.opacity    = '0';
-          setTimeout(function() {
-            ans.classList.remove('ck-animating');
-            ans.style.height     = '';
-            ans.style.overflow   = '';
-            ans.style.paddingTop = '';
-            ans.style.marginTop  = '';
-            ans.style.opacity    = '';
-            ans.style.transition = '';
-          }, 300);
-        });
-      }
+      void item.offsetHeight;
+
+      requestAnimationFrame(function() {
+        item.style.transition = 'height 0.28s cubic-bezier(0.4,0,1,1)';
+        item.style.height = closedH + 'px';
+        setTimeout(function() {
+          if (ans) ans.classList.remove('ck-animating');
+          item.style.height = '';
+          item.style.transition = '';
+          item._ckClosedH = undefined;
+        }, 300);
+      });
     }
 
     function bindToggle(item) {
@@ -2682,6 +2685,7 @@ We provide a personalized checklist based on your situation — local income, fo
         var bar1   = item.querySelector('.framer-1nesfnl');
         var bar2   = item.querySelector('.framer-ehsc30');
         var isOpen = item.classList.contains('framer-v-43ss71');
+
         if (isOpen) {
           closeCustomItem(item);
         } else {
@@ -2694,46 +2698,38 @@ We provide a personalized checklist based on your situation — local income, fo
               nativeOpen.click();
             });
           }
-          item.classList.remove('framer-v-z48pug');
-          item.classList.add('framer-v-43ss71');
+
+          var closedH = item.offsetHeight;
+          item._ckClosedH = closedH; // store for close animation
+
+          // Lock item at closed height BEFORE showing answer (prevents layout jump)
+          item.style.transition = 'none';
+          item.style.height = closedH + 'px';
+          void item.offsetHeight;
+
+          // Show answer div (display:flex via ck-animating, but clipped by item height)
           if (answer) {
-            // Step 1: show element to measure its natural height
             answer.classList.add('ck-animating');
-            answer.style.transition = 'none';
-            answer.style.overflow   = 'hidden';
-            answer.style.opacity    = '0';
-            answer.style.paddingTop = '';        // CSS padding:24px takes effect
-            answer.style.marginTop  = '0px';
-            answer.style.height     = 'auto';
-            void answer.offsetHeight;            // flush so offsetHeight is accurate
-            var targetH = answer.offsetHeight;   // full height including 24px padding
-            // Step 2: collapse to true zero
-            // margin-top cancels the 24px flex gap so no space is visible at height:0
-            // paddingTop:0 ensures border-box height:0 is truly 0 (not 24px from padding)
-            answer.style.paddingTop = '0px';
-            answer.style.marginTop  = (-GAP_PX) + 'px';
-            answer.style.height     = '0px';
-            void answer.offsetHeight;            // commit collapsed state before rAF
-            // Step 3: animate to open in next frame
+            void answer.offsetHeight;
+            var answerH = answer.offsetHeight; // natural height even when clipped
+            var openH = closedH + GAP_PX + answerH;
+
+            item.classList.remove('framer-v-z48pug');
+            item.classList.add('framer-v-43ss71');
+            if (bar1) bar1.style.backgroundColor = OPEN_BG;
+            if (bar2) { bar2.style.backgroundColor = OPEN_BG; bar2.style.opacity = '0'; bar2.style.transform = 'rotate(90deg)'; }
+            void item.offsetHeight;
+
             requestAnimationFrame(function() {
-              answer.style.transition = 'height 0.36s cubic-bezier(0,0,0.2,1),padding-top 0.36s cubic-bezier(0,0,0.2,1),margin-top 0.36s cubic-bezier(0,0,0.2,1),opacity 0.28s ease';
-              answer.style.height     = targetH + 'px';
-              answer.style.paddingTop = PAD_PX + 'px';
-              answer.style.marginTop  = '0px';
-              answer.style.opacity    = '1';
+              item.style.transition = 'height 0.36s cubic-bezier(0,0,0.2,1)';
+              item.style.height = openH + 'px';
               setTimeout(function() {
                 answer.classList.remove('ck-animating');
-                answer.style.height     = '';
-                answer.style.overflow   = '';
-                answer.style.paddingTop = '';
-                answer.style.marginTop  = '';
-                answer.style.opacity    = '';
-                answer.style.transition = '';
+                item.style.height = '';
+                item.style.transition = '';
               }, 400);
             });
           }
-          if (bar1) bar1.style.backgroundColor = OPEN_BG;
-          if (bar2) { bar2.style.backgroundColor = OPEN_BG; bar2.style.opacity = '0'; bar2.style.transform = 'rotate(90deg)'; }
         }
       });
     }
