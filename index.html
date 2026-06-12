@@ -2869,7 +2869,20 @@ iframe.skiptranslate{display:none!important}
     }
   }
 
-  function scanAll(){ document.querySelectorAll('h3.framer-text').forEach(patchH3); }
+  function protectRollingText(){
+    document.querySelectorAll('[class*="rolling-text-inner"]').forEach(function(el){
+      var anc = el.parentElement;
+      for (var d = 0; d < 5 && anc; d++){
+        if (anc.tagName === 'A'){
+          if (!anc._ckNoTr){ anc._ckNoTr = true; anc.setAttribute('translate','no'); anc.classList.add('notranslate'); }
+          break;
+        }
+        anc = anc.parentElement;
+      }
+    });
+  }
+
+  function scanAll(){ protectRollingText(); document.querySelectorAll('h3.framer-text').forEach(patchH3); }
 
   var obs = new MutationObserver(function(muts){
     for (var i = 0; i < muts.length; i++){ if (muts[i].addedNodes.length){ scanAll(); return; } }
@@ -2900,24 +2913,19 @@ function googleTranslateElementInit(){
   var btn = document.getElementById('ck-lang-switch');
   var enOpt = document.getElementById('ck-lang-en');
   var nlOpt = document.getElementById('ck-lang-nl');
-  var nlActive = false;
-  function getCombo(){ return document.querySelector('select.goog-te-combo'); }
+  var exp = 'expires=Thu, 01 Jan 1970 00:00:01 GMT';
+  // Detect current language from cookie set on previous reload
+  var isNL = /googtrans=\/en\/nl/.test(document.cookie);
+  if (isNL){ enOpt.classList.remove('ck-lang-on'); nlOpt.classList.add('ck-lang-on'); }
   btn.addEventListener('click', function(){
-    var combo = getCombo();
-    if (!combo) return;
-    if (!nlActive){
-      combo.value = 'nl';
-      combo.dispatchEvent(new Event('change'));
-      nlActive = true;
-      enOpt.classList.remove('ck-lang-on');
-      nlOpt.classList.add('ck-lang-on');
+    if (!isNL){
+      document.cookie = 'googtrans=/en/nl; path=/';
+      document.cookie = 'googtrans=/en/nl; path=/; domain=' + location.hostname;
     } else {
-      combo.value = '';
-      combo.dispatchEvent(new Event('change'));
-      nlActive = false;
-      nlOpt.classList.remove('ck-lang-on');
-      enOpt.classList.add('ck-lang-on');
+      document.cookie = 'googtrans=; ' + exp + '; path=/';
+      document.cookie = 'googtrans=; ' + exp + '; path=/; domain=' + location.hostname;
     }
+    location.reload();
   });
 })();
 </script>
