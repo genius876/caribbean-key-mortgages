@@ -2089,9 +2089,17 @@ We provide a personalized checklist based on your situation — local income, fo
 }
 /* Mobile/tablet nav logo size */
 [data-framer-name="Navigation Phone"]{overflow:visible!important}
+/* Hide separate logo text element — new logo images include text */
+[data-framer-name="Navigation Phone"] .framer-16v6qw{display:none!important}
+/* Widen logo containers to fit full logo-with-text image */
+[data-framer-name="Navigation Phone"] .framer-1mvbcom{width:150px!important;height:56px!important;overflow:visible!important}
 [data-framer-name="Navigation Phone"] .framer-jt7k9l,
-[data-framer-name="Navigation Phone"] .framer-1nr2dms{width:56px!important;height:56px!important;mix-blend-mode:normal!important;overflow:visible!important}
-[data-framer-name="Navigation Phone"] .framer-1nr2dms img{width:100%!important;height:100%!important;object-fit:contain!important}
+[data-framer-name="Navigation Phone"] .framer-1nr2dms{width:150px!important;height:56px!important;mix-blend-mode:normal!important;overflow:visible!important}
+/* Hide React img, use CSS background like desktop */
+[data-framer-name="Navigation Phone"] .framer-1nr2dms img{opacity:0!important}
+[data-framer-name="Navigation Phone"] .framer-1nr2dms{background-size:contain!important;background-repeat:no-repeat!important;background-position:center left!important}
+.framer-xahmw0:not(.ck-nav-scrolled) [data-framer-name="Navigation Phone"] .framer-1nr2dms{background-image:url('/images/white-new-logo.png')!important}
+.framer-xahmw0.ck-nav-scrolled [data-framer-name="Navigation Phone"] .framer-1nr2dms{background-image:url('/images/regular-new-logo.png')!important}
 /* Hide duplicate second logo in mobile/tablet nav */
 [data-framer-name="Navigation Phone"] .framer-1pghh9f{display:none!important}
 /* Ensure nav never hugs the screen edge on narrow viewports */
@@ -2102,9 +2110,6 @@ We provide a personalized checklist based on your situation — local income, fo
 [data-framer-name="Nav Link"]:has(a[href*="work"]){display:none!important}
 /* Hide the orphan divider after FAQs once Contact is gone */
 [data-framer-name="Nav Link"]:has(a[href*="faqs"]) ~ [data-framer-name="Line"]{display:none!important}
-/* Hide logo text until JS has replaced "Formix" — prevents flash on slow mobile */
-[data-framer-name="Logo Text"] p{opacity:0;transition:opacity 0.15s ease}
-[data-framer-name="Logo Text"] p.ck-text-ready{opacity:1!important}
 /* Hide Website field from contact form — not relevant for a mortgage company */
 .framer-1pyteke{display:none!important}
 /* Enlarge desktop nav logo — scale up from 149×64 while keeping aspect ratio */
