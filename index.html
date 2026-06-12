@@ -2163,14 +2163,16 @@ iframe.skiptranslate{display:none!important}
 [data-framer-name="Result Cards"]{display:none!important}
 .ck-benefit-grid{
   flex:2 0 0;min-width:1px;
-  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  background-color:var(--token-6c370109-bfec-4b69-9f9d-c55115fbfa09,#e5e5e5);
+  border-radius:20px;padding:7px;overflow:hidden;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:7px;
   align-self:stretch;
 }
 @media(min-width:810px) and (max-width:1199.98px){
-  .ck-benefit-grid{flex:none;grid-column:span 2;width:100%;grid-template-columns:repeat(3,1fr)}
+  .ck-benefit-grid{flex:none;grid-column:span 2;width:100%;grid-template-columns:repeat(3,1fr);gap:7px}
 }
 @media(max-width:809.98px){
-  .ck-benefit-grid{flex:none;width:100%;grid-template-columns:repeat(2,1fr)}
+  .ck-benefit-grid{flex:none;width:100%;grid-template-columns:repeat(2,1fr);gap:7px}
 }
 @media(max-width:479px){
   .ck-benefit-grid{grid-template-columns:1fr}
