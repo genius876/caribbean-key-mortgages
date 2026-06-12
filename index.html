@@ -2122,6 +2122,16 @@ We provide a personalized checklist based on your situation — local income, fo
 .ck-review-text.ck-review-expanded{display:block;-webkit-line-clamp:unset;overflow:visible}
 .ck-review-toggle{display:none;margin-top:8px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-size:inherit;font-weight:600;color:var(--token-c2c4dd37-49da-448f-83b8-7513387cf04e,rgb(255,55,0));text-decoration:underline;text-underline-offset:2px}
 .ck-review-toggle.ck-visible{display:inline-block}
+/* Google Translate — suppress default banner/toolbar */
+.goog-te-banner-frame{display:none!important}
+body{top:0!important}
+iframe.skiptranslate{display:none!important}
+.goog-te-gadget{font-size:0!important;color:transparent!important}
+/* Language switcher pill */
+#ck-lang-switch{position:fixed;bottom:28px;right:28px;z-index:9999;display:flex;align-items:center;background:#2a2d35;border:none;border-radius:100px;padding:3px;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(0,0,0,0.28)}
+#ck-lang-switch:focus-visible{box-shadow:0 0 0 3px rgba(255,55,0,0.5),0 4px 16px rgba(0,0,0,0.28)}
+.ck-lang-opt{padding:7px 16px;font-size:12px;font-weight:700;color:rgba(255,255,255,0.45);border-radius:100px;transition:background 0.18s,color 0.18s;letter-spacing:0.06em;line-height:1;user-select:none}
+.ck-lang-opt.ck-lang-on{background:rgb(255,55,0);color:#fff}
 </style>
 <script>
 (function(){
@@ -2871,6 +2881,44 @@ We provide a personalized checklist based on your situation — local income, fo
   setTimeout(scanAll, 400);
   setTimeout(scanAll, 1200);
   setTimeout(scanAll, 2500);
+})();
+</script>
+<!-- Language switcher -->
+<div id="google_translate_element" style="display:none;position:absolute"></div>
+<button id="ck-lang-switch" aria-label="Switch language">
+  <span class="ck-lang-opt ck-lang-on" id="ck-lang-en">EN</span>
+  <span class="ck-lang-opt" id="ck-lang-nl">NL</span>
+</button>
+<script>
+function googleTranslateElementInit(){
+  new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'nl',autoDisplay:false},'google_translate_element');
+}
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+(function(){
+  var btn = document.getElementById('ck-lang-switch');
+  var enOpt = document.getElementById('ck-lang-en');
+  var nlOpt = document.getElementById('ck-lang-nl');
+  var nlActive = false;
+  function getCombo(){ return document.querySelector('select.goog-te-combo'); }
+  btn.addEventListener('click', function(){
+    var combo = getCombo();
+    if (!combo) return;
+    if (!nlActive){
+      combo.value = 'nl';
+      combo.dispatchEvent(new Event('change'));
+      nlActive = true;
+      enOpt.classList.remove('ck-lang-on');
+      nlOpt.classList.add('ck-lang-on');
+    } else {
+      combo.value = '';
+      combo.dispatchEvent(new Event('change'));
+      nlActive = false;
+      nlOpt.classList.remove('ck-lang-on');
+      enOpt.classList.add('ck-lang-on');
+    }
+  });
 })();
 </script>
 </body></html>
