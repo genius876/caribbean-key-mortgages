@@ -2159,6 +2159,44 @@ iframe.skiptranslate{display:none!important}
 .framer-ewstth .framer-text,.framer-15j4fp9 .framer-text{text-align:center!important}
 /* Hero CTA only — don't override nav CTA which Framer already right-aligns */
 .framer-174qo4y .framer-wze75t{justify-content:center!important}
+/* Why Us — hide Framer stat cards, replaced by JS-injected benefit tiles */
+[data-framer-name="Result Cards"]{display:none!important}
+.ck-benefit-grid{
+  flex:2 0 0;min-width:1px;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  align-self:stretch;
+}
+@media(min-width:810px) and (max-width:1199.98px){
+  .ck-benefit-grid{flex:none;grid-column:span 2;width:100%;grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:809.98px){
+  .ck-benefit-grid{flex:none;width:100%;grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:479px){
+  .ck-benefit-grid{grid-template-columns:1fr}
+}
+.ck-benefit-card{
+  background:#fff;border-radius:14px;padding:22px 18px;
+  box-shadow:0 1px 2px rgba(0,0,0,.06),0 4px 8px rgba(0,0,0,.05),0 12px 24px rgba(0,0,0,.04);
+  display:flex;flex-direction:column;gap:10px;
+  opacity:0;transform:translateY(14px);
+  transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);
+}
+.ck-benefit-card.ck-visible{opacity:1;transform:none}
+.ck-benefit-icon{
+  width:34px;height:34px;
+  background:var(--token-c2c4dd37-49da-448f-83b8-7513387cf04e,#9c5438);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.ck-benefit-title{
+  font-family:"Inter","Inter Placeholder",sans-serif;
+  font-size:.9rem;font-weight:600;line-height:1.4;
+  color:var(--token-93a0b997-63bc-45d7-9a42-2255cf2ed90e,#482e20);margin:0;
+}
+.ck-benefit-note{
+  font-family:"Inter","Inter Placeholder",sans-serif;
+  font-size:.75rem;font-weight:400;line-height:1.45;color:#9e8878;margin:0;
+}
 </style>
 <script>
 (function(){
@@ -2966,6 +3004,51 @@ function googleTranslateElementInit(){
   window.addEventListener('scroll', applyNavScroll, {passive:true});
   setTimeout(applyNavScroll, 600);
   applyNavScroll();
+})();
+</script>
+<script>
+(function(){
+  var CARDS=[
+    {t:'We give independent advice'},
+    {t:'We do applications with multiple banks'},
+    {t:'We work with Residents and Non-Residents'},
+    {t:'We help secure financing up to 100%',n:'Case dependent, residents only'},
+    {t:'We offer international guidance'},
+    {t:'You will have one dedicated contact person'}
+  ];
+  var SVG='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function makeGrid(){
+    var g=document.createElement('div');
+    g.className='ck-benefit-grid';
+    CARDS.forEach(function(c,i){
+      var d=document.createElement('div');
+      d.className='ck-benefit-card';
+      d.style.transitionDelay=(i*70)+'ms';
+      d.innerHTML='<div class="ck-benefit-icon">'+SVG+'</div><p class="ck-benefit-title">'+c.t+'</p>'+(c.n?'<p class="ck-benefit-note">'+c.n+'</p>':'');
+      g.appendChild(d);
+    });
+    return g;
+  }
+  function run(){
+    var targets=document.querySelectorAll('[data-framer-name="Result Cards"]:not([data-ck-done])');
+    if(!targets.length)return;
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.querySelectorAll('.ck-benefit-card').forEach(function(c){c.classList.add('ck-visible')});
+          obs.unobserve(e.target);
+        }
+      });
+    },{threshold:0.1});
+    targets.forEach(function(el){
+      el.setAttribute('data-ck-done','1');
+      var g=makeGrid();
+      el.parentNode.insertBefore(g,el.nextSibling);
+      obs.observe(g);
+    });
+  }
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run):run();
+  setTimeout(run,800);
 })();
 </script>
 </body></html>
