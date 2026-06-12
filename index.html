@@ -2947,12 +2947,40 @@ function googleTranslateElementInit(){
 </script>
 <script>
 (function(){
+  var WHITE_LOGO = '/images/white-new-logo.png';
+  var REGULAR_LOGO = '/images/regular-new-logo.png';
+  var OLD_LOGO_FRAG = 'RT7nfWHgw3rHSYWJxkl2S0vOqE_fc5839';
+
+  function getLogoImg(){
+    var nav = document.querySelector('.framer-xahmw0');
+    return nav ? nav.querySelector('img[src*="' + OLD_LOGO_FRAG + '"], img[src*="white-new-logo"], img[src*="regular-new-logo"]') : null;
+  }
+
+  function updateLogo(scrolled){
+    var img = getLogoImg();
+    if (!img) return;
+    var target = scrolled ? REGULAR_LOGO : WHITE_LOGO;
+    if (img.src !== location.origin + target) img.src = target;
+  }
+
   function applyNavScroll(){
     var nav = document.querySelector('.framer-xahmw0');
     if (!nav) return;
-    nav.classList.toggle('ck-nav-scrolled', window.scrollY > 10);
+    var scrolled = window.scrollY > 10;
+    nav.classList.toggle('ck-nav-scrolled', scrolled);
+    updateLogo(scrolled);
   }
+
+  // Re-apply if Framer re-renders and resets the logo src
+  var nav = document.querySelector('.framer-xahmw0');
+  if (nav){
+    new MutationObserver(function(){ updateLogo(window.scrollY > 10); })
+      .observe(nav, {childList:true, subtree:true, attributeFilter:['src']});
+  }
+
   window.addEventListener('scroll', applyNavScroll, {passive:true});
+  // Run after Framer hydration
+  setTimeout(applyNavScroll, 600);
   applyNavScroll();
 })();
 </script>
