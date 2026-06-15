@@ -2159,6 +2159,29 @@ iframe.skiptranslate{display:none!important}
 .framer-ewstth .framer-text,.framer-15j4fp9 .framer-text{text-align:center!important}
 /* Hero CTA only — don't override nav CTA which Framer already right-aligns */
 .framer-174qo4y .framer-wze75t{justify-content:center!important}
+/* Business partner row — injected after Section Logos */
+.ck-partner-row{
+  width:100%;box-sizing:border-box;
+  border-top:1px solid var(--token-6a4ed56d-f5d8-40c8-b936-26601b549f63,#00000014);
+  display:flex;flex-flow:row;align-items:center;
+  gap:50px;padding:28px 40px;
+}
+@media(max-width:1199.98px){.ck-partner-row{gap:30px;padding:18px 25px}}
+@media(max-width:809.98px){.ck-partner-row{gap:20px;padding:15px}}
+.ck-partner-label{
+  font-family:"Cormorant Garamond","Cormorant Garamond Placeholder",serif;
+  font-size:.9rem;font-weight:500;
+  color:var(--token-93a0b997-63bc-45d7-9a42-2255cf2ed90e,#482e20);
+  white-space:nowrap;min-width:100px;flex-shrink:0;
+}
+.ck-partner-link{
+  font-family:"Inter","Inter Placeholder",sans-serif;
+  font-size:.82rem;font-weight:500;
+  color:var(--token-c2c4dd37-49da-448f-83b8-7513387cf04e,#9c5438);
+  text-decoration:none;display:inline-flex;align-items:center;gap:5px;
+  transition:opacity .2s ease;
+}
+.ck-partner-link:hover{opacity:.75;text-decoration:underline;text-underline-offset:3px}
 /* Why Us — hide Framer stat cards, replaced by JS-injected benefit tiles */
 [data-framer-name="Result Cards"]{display:none!important}
 .ck-benefit-grid{
@@ -3005,6 +3028,25 @@ function googleTranslateElementInit(){
   window.addEventListener('scroll', applyNavScroll, {passive:true});
   setTimeout(applyNavScroll, 600);
   applyNavScroll();
+})();
+</script>
+<script>
+(function(){
+  var ARROW='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function run(){
+    var targets=document.querySelectorAll('[data-framer-name="Section Logos"]:not([data-ck-partner])');
+    if(!targets.length)return;
+    targets.forEach(function(el){
+      el.setAttribute('data-ck-partner','1');
+      var row=document.createElement('div');
+      row.className='ck-partner-row';
+      row.innerHTML='<span class="ck-partner-label">Business partner:</span>'
+        +'<a class="ck-partner-link" href="https://sunset-realtors.com/" target="_blank" rel="noopener noreferrer">Sunset Realtors '+ARROW+'</a>';
+      el.appendChild(row);
+    });
+  }
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run):run();
+  setTimeout(run,800);
 })();
 </script>
 <script>
