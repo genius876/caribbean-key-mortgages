@@ -2270,6 +2270,14 @@ iframe.skiptranslate{display:none!important}
     padding:7px;
   }
 }
+/* Why Us carousel */
+.ck-whyus-carousel{position:absolute;inset:0;z-index:1;overflow:hidden;border-radius:inherit}
+.ck-whyus-slide{position:absolute;inset:0;opacity:0;transition:opacity 1s ease}
+.ck-whyus-slide.ck-wc-active{opacity:1}
+.ck-whyus-slide img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.ck-whyus-dots{position:absolute;bottom:14px;right:14px;display:flex;gap:5px;z-index:2}
+.ck-whyus-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.4);transition:background .3s}
+.ck-whyus-dot.ck-wc-active{background:rgba(255,255,255,0.95)}
 </style>
 <script>
 (function(){
@@ -3148,6 +3156,68 @@ function googleTranslateElementInit(){
   }
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run):run();
   setTimeout(run,800);
+})();
+</script>
+<script>
+(function(){
+  var IMGS=['/images/ck-new-13.jpg','/images/ck-new-14.jpg','/images/ck-new-15.jpg'];
+  var INTERVAL=3500;
+
+  function buildCarousel(top){
+    if(top.querySelector('.ck-whyus-carousel'))return;
+    var wrap=document.createElement('div');
+    wrap.className='ck-whyus-carousel';
+    IMGS.forEach(function(src,i){
+      var slide=document.createElement('div');
+      slide.className='ck-whyus-slide'+(i===0?' ck-wc-active':'');
+      var img=document.createElement('img');
+      img.src=src;img.alt='';img.loading='lazy';img.decoding='async';
+      slide.appendChild(img);
+      wrap.appendChild(slide);
+    });
+    var dotsEl=document.createElement('div');
+    dotsEl.className='ck-whyus-dots';
+    IMGS.forEach(function(_,i){
+      var d=document.createElement('span');
+      d.className='ck-whyus-dot'+(i===0?' ck-wc-active':'');
+      dotsEl.appendChild(d);
+    });
+    wrap.appendChild(dotsEl);
+    top.appendChild(wrap);
+    // auto-advance
+    var cur=0;
+    setInterval(function(){
+      var slides=wrap.querySelectorAll('.ck-whyus-slide');
+      var dots=wrap.querySelectorAll('.ck-whyus-dot');
+      slides[cur].classList.remove('ck-wc-active');
+      dots[cur].classList.remove('ck-wc-active');
+      cur=(cur+1)%IMGS.length;
+      slides[cur].classList.add('ck-wc-active');
+      dots[cur].classList.add('ck-wc-active');
+    },INTERVAL);
+  }
+
+  function run(){
+    document.querySelectorAll('[data-framer-name="Section Why Us"] [data-framer-name="Top"]').forEach(buildCarousel);
+  }
+
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run):run();
+  [300,800,2000].forEach(function(t){setTimeout(run,t);});
+
+  // Re-run after React hydration resets the DOM
+  var obs=new MutationObserver(function(mutations){
+    var relevant=mutations.some(function(m){
+      return Array.from(m.addedNodes).some(function(n){
+        return n.nodeType===1&&(
+          (n.getAttribute&&n.getAttribute('data-framer-name')==='Top')||
+          (n.querySelector&&n.querySelector('[data-framer-name="Top"]'))
+        );
+      });
+    });
+    if(relevant)run();
+  });
+  obs.observe(document.body,{childList:true,subtree:true});
+  setTimeout(function(){obs.disconnect();},15000);
 })();
 </script>
 </body></html>
