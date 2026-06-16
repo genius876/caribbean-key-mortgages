@@ -2273,6 +2273,11 @@ iframe.skiptranslate{display:none!important}
 /* Why Us carousel — only target the About Card image Top, not the stat card Tops */
 [data-framer-name="About Card"] [data-framer-name="Top"] [data-framer-background-image-wrapper="true"]{display:none!important}
 .framer-unoe89[data-framer-name="Top"] [data-framer-background-image-wrapper="true"]{display:none!important}
+/* Safety net: prevent the carousel Top from collapsing to its 1px CSS default at desktop
+   (normally the benefit grid flex height drives the row; this is a floor for the transition window) */
+@media(min-width:1200px){
+  .framer-unoe89[data-framer-name="Top"]{min-height:340px!important}
+}
 .ck-whyus-carousel{position:absolute;inset:0;z-index:10;overflow:hidden;border-radius:inherit;background:url('/images/ck-new-13.jpg') center 25%/cover no-repeat}
 /* Slides stack on top of each other; outgoing stays fully opaque while incoming fades in above it */
 .ck-whyus-slide{position:absolute;inset:0;opacity:0;z-index:0}
@@ -3164,7 +3169,21 @@ function googleTranslateElementInit(){
     });
   }
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run):run();
-  setTimeout(run,800);
+  [300,800,2000,4000].forEach(function(t){setTimeout(run,t);});
+  // Re-insert the grid if React hydration replaces the Result Cards element
+  var gridObs=new MutationObserver(function(mutations){
+    var needRun=mutations.some(function(m){
+      return Array.from(m.addedNodes).some(function(n){
+        return n.nodeType===1&&(
+          (n.getAttribute&&n.getAttribute('data-framer-name')==='Result Cards')||
+          (n.querySelector&&n.querySelector('[data-framer-name="Result Cards"]'))
+        );
+      });
+    });
+    if(needRun)run();
+  });
+  gridObs.observe(document.body,{childList:true,subtree:true});
+  setTimeout(function(){gridObs.disconnect();},20000);
 })();
 </script>
 <script>
