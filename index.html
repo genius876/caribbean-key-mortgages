@@ -2278,13 +2278,13 @@ iframe.skiptranslate{display:none!important}
 @media(min-width:1200px){
   .framer-unoe89[data-framer-name="Top"]{min-height:340px!important}
 }
-.ck-whyus-carousel{position:absolute;inset:0;z-index:10;overflow:hidden;border-radius:inherit;background:url('/images/ck-new-13.jpg') center 25%/cover no-repeat}
+.ck-whyus-carousel{position:absolute;inset:0;z-index:10;overflow:hidden;border-radius:inherit;background:url('/images/ck-new-13.jpg') center 40%/cover no-repeat}
 /* Slides stack on top of each other; outgoing stays fully opaque while incoming fades in above it */
 .ck-whyus-slide{position:absolute;inset:0;opacity:0;z-index:0}
 .ck-whyus-slide.ck-wc-active{opacity:1;z-index:1}
 .ck-whyus-slide.ck-wc-entering{opacity:0;z-index:2;transition:opacity 0.8s ease}
 .ck-whyus-slide.ck-wc-entering.ck-wc-visible{opacity:1}
-.ck-whyus-slide img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 25%}
+.ck-whyus-slide img{display:block;width:100%;height:100%;object-fit:cover;object-position:center center}
 .ck-whyus-dots{position:absolute;bottom:14px;right:14px;display:flex;gap:5px;z-index:11}
 .ck-whyus-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.4);transition:background .3s}
 .ck-whyus-dot.ck-wc-active{background:rgba(255,255,255,0.95)}
@@ -3188,28 +3188,33 @@ function googleTranslateElementInit(){
 </script>
 <script>
 (function(){
-  var IMGS=['/images/ck-new-13.jpg','/images/ck-new-14.jpg','/images/ck-new-15.jpg'];
+  // src + object-position per image (portrait 13 needs 40% to show facades not just sky)
+  var IMGS=[
+    {src:'/images/ck-new-13.jpg', pos:'center 40%'},
+    {src:'/images/ck-new-14.jpg', pos:'center center'},
+    {src:'/images/ck-new-15.jpg', pos:'center center'}
+  ];
   var INTERVAL=4000;
 
   // Preload all images immediately so they are decoded before any transition fires
   var _preloaded={};
-  IMGS.forEach(function(src){
-    if(_preloaded[src])return;
-    _preloaded[src]=true;
+  IMGS.forEach(function(im){
+    if(_preloaded[im.src])return;
+    _preloaded[im.src]=true;
     var p=new Image();
-    p.src=src;
+    p.src=im.src;
   });
 
   function buildCarousel(top){
     if(top.querySelector('.ck-whyus-carousel'))return;
     var wrap=document.createElement('div');
     wrap.className='ck-whyus-carousel';
-    IMGS.forEach(function(src,i){
+    IMGS.forEach(function(im,i){
       var slide=document.createElement('div');
       slide.className='ck-whyus-slide'+(i===0?' ck-wc-active':'');
       var img=document.createElement('img');
-      // Eager + sync so the image is fully decoded before its slide becomes active
-      img.src=src;img.alt='';img.loading='eager';img.decoding='sync';
+      img.src=im.src;img.alt='';img.loading='eager';img.decoding='sync';
+      img.style.objectPosition=im.pos;
       slide.appendChild(img);
       wrap.appendChild(slide);
     });
