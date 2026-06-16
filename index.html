@@ -2242,6 +2242,16 @@ iframe.skiptranslate{display:none!important}
   font-family:"Inter","Inter Placeholder",sans-serif;
   font-size:.75rem;font-weight:400;line-height:1.45;color:#9e8878;margin:0;
 }
+/* Process steps: correct order on mobile (Framer groups 1+3 in col-1, 2+4 in col-2;
+   on mobile they stack as 1,3,2,4 — fix by flattening the column wrappers) */
+@media(max-width:809.98px){
+  .framer-vIWkY .framer-n2q86d,
+  .framer-vIWkY .framer-gip1y1{display:contents!important}
+  .framer-vIWkY .framer-1m5neei-container{order:1!important;opacity:1!important}
+  .framer-vIWkY .framer-19v80qg-container{order:2!important;opacity:1!important}
+  .framer-vIWkY .framer-3ye9b7-container{order:3!important;opacity:1!important}
+  .framer-vIWkY .framer-g121yq-container{order:4!important;opacity:1!important}
+}
 </style>
 <script>
 (function(){
