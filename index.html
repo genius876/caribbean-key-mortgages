@@ -2096,12 +2096,21 @@ We provide a personalized checklist based on your situation — local income, fo
 [data-framer-name="Navigation Phone"] .framer-jt7k9l,
 [data-framer-name="Navigation Phone"] .framer-1nr2dms{width:150px!important;height:56px!important;mix-blend-mode:normal!important;overflow:visible!important}
 /* Hide React img, use CSS background like desktop */
-[data-framer-name="Navigation Phone"] .framer-1nr2dms img{opacity:0!important}
-[data-framer-name="Navigation Phone"] .framer-1nr2dms{background-size:contain!important;background-repeat:no-repeat!important;background-position:center left!important}
+[data-framer-name="Navigation Phone"] .framer-1nr2dms img,
+[data-framer-name="Navigation Phone Open"] .framer-1nr2dms img{opacity:0!important}
+[data-framer-name="Navigation Phone"] .framer-1nr2dms,
+[data-framer-name="Navigation Phone Open"] .framer-1nr2dms{background-size:contain!important;background-repeat:no-repeat!important;background-position:center left!important}
 .framer-xahmw0:not(.ck-nav-scrolled) [data-framer-name="Navigation Phone"] .framer-1nr2dms{background-image:url('/images/white-new-logo.png')!important}
 .framer-xahmw0.ck-nav-scrolled [data-framer-name="Navigation Phone"] .framer-1nr2dms{background-image:url('/images/regular-new-logo.png')!important}
-/* Hide duplicate second logo in mobile/tablet nav */
-[data-framer-name="Navigation Phone"] .framer-1pghh9f{display:none!important}
+/* Open state: restore same logo size as closed, use white logo, hide text (which takes over when element shrinks) */
+[data-framer-name="Navigation Phone Open"] .framer-1nr2dms{background-image:url('/images/white-new-logo.png')!important;width:150px!important;height:56px!important}
+[data-framer-name="Navigation Phone Open"] [data-framer-name="Image Wrapper"],
+[data-framer-name="Navigation Phone Open"] [data-framer-name="Primary"],
+[data-framer-name="Navigation Phone Open"] .framer-11bf5yu-container{width:150px!important;height:56px!important;overflow:visible!important}
+[data-framer-name="Navigation Phone Open"] [data-framer-name="Logo Text"]{display:none!important}
+/* Hide duplicate second logo in mobile/tablet nav (closed and open) */
+[data-framer-name="Navigation Phone"] .framer-1pghh9f,
+[data-framer-name="Navigation Phone Open"] .framer-1pghh9f{display:none!important}
 /* Ensure nav never hugs the screen edge on narrow viewports */
 [data-framer-name="Navigation Phone"] .framer-dxexlh{padding-left:max(16px,3vw)!important;padding-right:max(16px,3vw)!important;box-sizing:border-box!important}
 /* Hide Contact + Work from mobile nav — document-wide so React portals are covered */
@@ -2251,6 +2260,15 @@ iframe.skiptranslate{display:none!important}
   .framer-vIWkY .framer-19v80qg-container{order:2!important;opacity:1!important}
   .framer-vIWkY .framer-3ye9b7-container{order:3!important;opacity:1!important}
   .framer-vIWkY .framer-g121yq-container{order:4!important;opacity:1!important}
+  /* Restore the background that display:contents removed from the column wrappers */
+  .framer-vIWkY .framer-1m5neei-container,
+  .framer-vIWkY .framer-19v80qg-container,
+  .framer-vIWkY .framer-3ye9b7-container,
+  .framer-vIWkY .framer-g121yq-container{
+    background-color:var(--token-6c370109-bfec-4b69-9f9d-c55115fbfa09,#e5e5e5);
+    border-radius:20px;
+    padding:7px;
+  }
 }
 </style>
 <script>
