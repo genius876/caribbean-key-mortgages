@@ -2271,11 +2271,14 @@ iframe.skiptranslate{display:none!important}
   }
 }
 /* Why Us carousel */
-/* Permanently hide the original Framer static image so it never bleeds through transitions */
-[data-framer-name="Section Why Us"] [data-framer-name="Top"] > [data-framer-background-image-wrapper="true"]{opacity:0!important;pointer-events:none!important}
-.ck-whyus-carousel{position:absolute;inset:0;z-index:10;overflow:hidden;border-radius:inherit;background:#1a1a1a}
-.ck-whyus-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.7s ease-in-out}
-.ck-whyus-slide.ck-wc-active{opacity:1}
+/* Hide original Framer static image — any descendant depth, not just direct child */
+[data-framer-name="Section Why Us"] [data-framer-name="Top"] [data-framer-background-image-wrapper="true"]{display:none!important}
+.ck-whyus-carousel{position:absolute;inset:0;z-index:10;overflow:hidden;border-radius:inherit}
+/* Slides stack on top of each other; outgoing stays fully opaque while incoming fades in above it */
+.ck-whyus-slide{position:absolute;inset:0;opacity:0;z-index:0}
+.ck-whyus-slide.ck-wc-active{opacity:1;z-index:1}
+.ck-whyus-slide.ck-wc-entering{opacity:0;z-index:2;transition:opacity 0.8s ease}
+.ck-whyus-slide.ck-wc-entering.ck-wc-visible{opacity:1}
 .ck-whyus-slide img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 25%}
 .ck-whyus-dots{position:absolute;bottom:14px;right:14px;display:flex;gap:5px;z-index:11}
 .ck-whyus-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.4);transition:background .3s}
@@ -3163,7 +3166,16 @@ function googleTranslateElementInit(){
 <script>
 (function(){
   var IMGS=['/images/ck-new-13.jpg','/images/ck-new-14.jpg','/images/ck-new-15.jpg'];
-  var INTERVAL=3500;
+  var INTERVAL=4000;
+
+  // Preload all images immediately so they are decoded before any transition fires
+  var _preloaded={};
+  IMGS.forEach(function(src){
+    if(_preloaded[src])return;
+    _preloaded[src]=true;
+    var p=new Image();
+    p.src=src;
+  });
 
   function buildCarousel(top){
     if(top.querySelector('.ck-whyus-carousel'))return;
@@ -3173,7 +3185,8 @@ function googleTranslateElementInit(){
       var slide=document.createElement('div');
       slide.className='ck-whyus-slide'+(i===0?' ck-wc-active':'');
       var img=document.createElement('img');
-      img.src=src;img.alt='';img.loading='lazy';img.decoding='async';
+      // Eager + sync so the image is fully decoded before its slide becomes active
+      img.src=src;img.alt='';img.loading='eager';img.decoding='sync';
       slide.appendChild(img);
       wrap.appendChild(slide);
     });
@@ -3186,17 +3199,41 @@ function googleTranslateElementInit(){
     });
     wrap.appendChild(dotsEl);
     top.appendChild(wrap);
-    // auto-advance
+    // auto-advance — wait for all images to load before starting transitions
     var cur=0;
-    setInterval(function(){
+    var transitioning=false;
+    function advance(){
+      if(transitioning)return;
+      transitioning=true;
       var slides=wrap.querySelectorAll('.ck-whyus-slide');
       var dots=wrap.querySelectorAll('.ck-whyus-dot');
-      slides[cur].classList.remove('ck-wc-active');
+      var next=(cur+1)%IMGS.length;
+      // Phase 1: place next slide on top and fade it IN while current stays fully visible below
+      slides[next].classList.add('ck-wc-entering');
+      // Force reflow so the opacity:0 base state is painted before we add visible
+      void slides[next].offsetHeight;
+      slides[next].classList.add('ck-wc-visible');
       dots[cur].classList.remove('ck-wc-active');
-      cur=(cur+1)%IMGS.length;
-      slides[cur].classList.add('ck-wc-active');
-      dots[cur].classList.add('ck-wc-active');
-    },INTERVAL);
+      dots[next].classList.add('ck-wc-active');
+      // Phase 2: after incoming is fully painted, clean up — outgoing just disappears behind it
+      setTimeout(function(){
+        slides[cur].classList.remove('ck-wc-active');
+        slides[next].classList.remove('ck-wc-entering','ck-wc-visible');
+        slides[next].classList.add('ck-wc-active');
+        cur=next;
+        transitioning=false;
+      },850);
+    }
+    var imgs=wrap.querySelectorAll('img');
+    var loaded=0;
+    function onLoad(){
+      loaded++;
+      if(loaded>=imgs.length) setInterval(advance,INTERVAL);
+    }
+    imgs.forEach(function(im){
+      if(im.complete) onLoad();
+      else{ im.addEventListener('load',onLoad); im.addEventListener('error',onLoad); }
+    });
   }
 
   function run(){
