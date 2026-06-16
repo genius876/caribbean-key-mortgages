@@ -2270,9 +2270,9 @@ iframe.skiptranslate{display:none!important}
     padding:7px;
   }
 }
-/* Why Us carousel */
-[data-framer-name="Section Why Us"] [data-framer-name="Top"] [data-framer-background-image-wrapper="true"]{display:none!important}
-.framer-1xertou .framer-unoe89 [data-framer-background-image-wrapper="true"]{display:none!important}
+/* Why Us carousel — only target the About Card image Top, not the stat card Tops */
+[data-framer-name="About Card"] [data-framer-name="Top"] [data-framer-background-image-wrapper="true"]{display:none!important}
+.framer-unoe89[data-framer-name="Top"] [data-framer-background-image-wrapper="true"]{display:none!important}
 .ck-whyus-carousel{position:absolute;inset:0;z-index:10;overflow:hidden;border-radius:inherit;background:url('/images/ck-new-13.jpg') center 25%/cover no-repeat}
 /* Slides stack on top of each other; outgoing stays fully opaque while incoming fades in above it */
 .ck-whyus-slide{position:absolute;inset:0;opacity:0;z-index:0}
@@ -3245,13 +3245,21 @@ function googleTranslateElementInit(){
   }
 
   function run(){
-    document.querySelectorAll('[data-framer-name="Section Why Us"] [data-framer-name="Top"]').forEach(buildCarousel);
+    // Remove any wrongly-injected carousels from non-About-Card Top elements
+    document.querySelectorAll('[data-framer-name="Section Why Us"] [data-framer-name="Top"]').forEach(function(top){
+      if(!top.classList.contains('framer-unoe89')){
+        var stray=top.querySelector('.ck-whyus-carousel');
+        if(stray)stray.parentNode.removeChild(stray);
+      }
+    });
+    // Only inject carousel into the About Card image Top (class framer-unoe89)
+    document.querySelectorAll('.framer-unoe89[data-framer-name="Top"]').forEach(buildCarousel);
   }
 
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run):run();
   [300,800,2000].forEach(function(t){setTimeout(run,t);});
 
-  // Rebuild carousel if React hydration removes it OR replaces the Top container
+  // Rebuild carousel only when the About Card carousel is gone or its Top is replaced
   var obs=new MutationObserver(function(mutations){
     var rebuild=mutations.some(function(m){
       var carouselGone=Array.from(m.removedNodes).some(function(n){
@@ -3260,13 +3268,13 @@ function googleTranslateElementInit(){
           (n.querySelector&&n.querySelector('.ck-whyus-carousel'))
         );
       });
-      var topAdded=Array.from(m.addedNodes).some(function(n){
+      var aboutCardTopAdded=Array.from(m.addedNodes).some(function(n){
         return n.nodeType===1&&(
-          (n.getAttribute&&n.getAttribute('data-framer-name')==='Top')||
-          (n.querySelector&&n.querySelector('[data-framer-name="Top"]'))
+          (n.classList&&n.classList.contains('framer-unoe89'))||
+          (n.querySelector&&n.querySelector('.framer-unoe89'))
         );
       });
-      return carouselGone||topAdded;
+      return carouselGone||aboutCardTopAdded;
     });
     if(rebuild)run();
   });
