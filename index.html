@@ -3349,6 +3349,7 @@ function googleTranslateElementInit(){
   // exist in a self-hosted export. Intercept on the capture phase so we run before
   // React's delegated submit handler, then relay the fields ourselves.
   var SENDING='Sending your message…';
+  var LOADED=Date.now();
   var SENT='Thanks! Your message has been sent — we’ll be in touch shortly.';
   var FAIL='Something went wrong. Please email info@caribbean-key.com directly.';
 
@@ -3400,6 +3401,8 @@ function googleTranslateElementInit(){
         data[el.name]=el.value;
       });
     }
+
+    data._fillMs=Date.now()-LOADED;
 
     form.setAttribute('data-ck-sending','1');
     setBusy(form,true);
