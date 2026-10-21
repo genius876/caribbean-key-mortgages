@@ -3353,6 +3353,39 @@ function googleTranslateElementInit(){
   var SENT='Thanks! Your message has been sent — we’ll be in touch shortly.';
   var FAIL='Something went wrong. Please email info@caribbean-key.com directly.';
 
+  // The exported form marks "Websiste" (sic) as required even though it renders at
+  // 0x0 in most breakpoints. A required control that is not visible cannot be
+  // focused, so the browser blocks submission and never fires a submit event --
+  // the form is impossible to send. Drop `required` from any field that is not
+  // actually on screen. Runs on a capture-phase click so it lands immediately
+  // before native validation, plus on a timer to survive React re-renders.
+  function unrequireHidden(form){
+    if(!form)return;
+    Array.prototype.forEach.call(form.querySelectorAll('[required]'),function(el){
+      var r=el.getBoundingClientRect();
+      if(r.width===0||r.height===0){
+        el.required=false;
+        el.removeAttribute('required');
+      }
+    });
+  }
+
+  function sweepAll(){
+    Array.prototype.forEach.call(document.querySelectorAll('form'),function(f){
+      if(isContactForm(f))unrequireHidden(f);
+    });
+  }
+
+  document.addEventListener('click',function(e){
+    var btn=e.target&&e.target.closest&&e.target.closest('button[type="submit"],input[type="submit"]');
+    if(!btn)return;
+    var form=btn.form||btn.closest('form');
+    if(isContactForm(form))unrequireHidden(form);
+  },true);
+
+  document.readyState==='loading'?document.addEventListener('DOMContentLoaded',sweepAll):sweepAll();
+  [0,100,300,800,2000,4000].forEach(function(t){setTimeout(sweepAll,t);});
+
   function isContactForm(f){
     return f&&f.tagName==='FORM'&&f.querySelector('input[name="Name"]')&&f.querySelector('input[name="Email"]');
   }
@@ -3374,6 +3407,23 @@ function googleTranslateElementInit(){
     var n=statusNode(form);
     n.textContent=msg;
     n.style.color=kind==='error'?'#ff8a73':(kind==='ok'?'#7ee0a8':'rgba(255,255,255,0.65)');
+  }
+
+  // form.reset() does not update React-controlled inputs: Framer re-renders them
+  // from state, so the old values reappear. Drive the native value setter and fire
+  // an input event so React's onChange sees the change and state clears too.
+  function clearForm(form){
+    Array.prototype.forEach.call(form.querySelectorAll('input[name],textarea[name]'),function(el){
+      if(el.type==='hidden'||el.type==='submit'||el.type==='button')return;
+      try{
+        var proto=el.tagName==='TEXTAREA'?window.HTMLTextAreaElement.prototype:window.HTMLInputElement.prototype;
+        var d=Object.getOwnPropertyDescriptor(proto,'value');
+        if(d&&d.set){d.set.call(el,'');}else{el.value='';}
+        el.dispatchEvent(new Event('input',{bubbles:true}));
+        el.dispatchEvent(new Event('change',{bubbles:true}));
+      }catch(err){el.value='';}
+    });
+    try{form.reset();}catch(err){}
   }
 
   function setBusy(form,busy){
@@ -3417,7 +3467,7 @@ function googleTranslateElementInit(){
     }).then(function(res){
       if(res.ok){
         show(form,SENT,'ok');
-        try{form.reset();}catch(err){}
+        clearForm(form);
         setBusy(form,false);
       }else{
         show(form,(res.body&&res.body.error)||FAIL,'error');
