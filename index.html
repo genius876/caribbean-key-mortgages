@@ -3342,5 +3342,91 @@ function googleTranslateElementInit(){
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fixCopyright):fixCopyright();
   setTimeout(fixCopyright,1500);
 })();
+
+(function(){
+  // Contact form -> /api/contact -> Resend -> info@caribbean-key.com
+  // Framer's form has no action and relies on Framer's hosted backend, which does not
+  // exist in a self-hosted export. Intercept on the capture phase so we run before
+  // React's delegated submit handler, then relay the fields ourselves.
+  var SENDING='Sending your message…';
+  var SENT='Thanks! Your message has been sent — we’ll be in touch shortly.';
+  var FAIL='Something went wrong. Please email info@caribbean-key.com directly.';
+
+  function isContactForm(f){
+    return f&&f.tagName==='FORM'&&f.querySelector('input[name="Name"]')&&f.querySelector('input[name="Email"]');
+  }
+
+  function statusNode(form){
+    var n=form.querySelector('[data-ck-form-status]');
+    if(!n){
+      n=document.createElement('p');
+      n.setAttribute('data-ck-form-status','');
+      n.setAttribute('role','status');
+      n.setAttribute('aria-live','polite');
+      n.style.cssText='margin:14px 0 0;font-size:14px;line-height:1.5;font-family:inherit';
+      form.appendChild(n);
+    }
+    return n;
+  }
+
+  function show(form,msg,kind){
+    var n=statusNode(form);
+    n.textContent=msg;
+    n.style.color=kind==='error'?'#ff8a73':(kind==='ok'?'#7ee0a8':'rgba(255,255,255,0.65)');
+  }
+
+  function setBusy(form,busy){
+    var btn=form.querySelector('button[type="submit"],input[type="submit"]');
+    if(!btn)return;
+    btn.disabled=busy;
+    btn.style.opacity=busy?'0.6':'';
+    btn.style.pointerEvents=busy?'none':'';
+    if(busy){btn.setAttribute('aria-busy','true');}else{btn.removeAttribute('aria-busy');}
+  }
+
+  document.addEventListener('submit',function(e){
+    var form=e.target;
+    if(!isContactForm(form))return;
+    e.preventDefault();
+    e.stopPropagation();
+    if(form.getAttribute('data-ck-sending')==='1')return;
+
+    var data={};
+    try{
+      new FormData(form).forEach(function(v,k){ if(typeof v==='string') data[k]=v; });
+    }catch(err){
+      // Fallback for any browser where FormData iteration is unavailable.
+      Array.prototype.forEach.call(form.querySelectorAll('input[name],textarea[name]'),function(el){
+        data[el.name]=el.value;
+      });
+    }
+
+    form.setAttribute('data-ck-sending','1');
+    setBusy(form,true);
+    show(form,SENDING,'info');
+
+    fetch('/api/contact',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(data)
+    }).then(function(r){
+      return r.json().catch(function(){return null;}).then(function(j){return {ok:r.ok,body:j};});
+    }).then(function(res){
+      if(res.ok){
+        show(form,SENT,'ok');
+        try{form.reset();}catch(err){}
+        setBusy(form,false);
+      }else{
+        show(form,(res.body&&res.body.error)||FAIL,'error');
+        setBusy(form,false);
+      }
+    }).catch(function(){
+      show(form,FAIL,'error');
+      setBusy(form,false);
+    }).then(function(){
+      form.removeAttribute('data-ck-sending');
+    });
+  },true);
+})();
 </script>
 </body></html>
